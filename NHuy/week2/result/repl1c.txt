@@ -1,0 +1,56 @@
+
+wrote 24 rows -> result/repl1c.csv
+
+run                           repl              size  ways  L2 miss%   L2 MPKI  MPKI/base  cyc/base  mshrMiss/miss  L2acc/L1miss  L2missLat  valid
+repl1c_FIFO-W16_graph         FIFORP         1048576    16     42.81     4.013      1.057     1.009          1.000         1.000       78.0  True
+repl1c_LFSR-W16_graph         LFSRRP         1048576    16     42.70     4.005      1.054     1.008          1.000         1.000       78.0  True
+repl1c_LRU-W16_graph          LRURP          1048576    16     40.52     3.798      1.000     1.000          1.000         1.000       77.9  True
+repl1c_NMRU-W16_graph         NMRURP         1048576    16     42.52     3.987      1.050     1.007          1.000         1.000       77.9  True
+repl1c_Random-W16_graph       RandomRP       1048576    16     42.66     4.000      1.053     1.008          1.000         1.000       78.0  True
+repl1c_TreePLRU-W16_graph     TreePLRURP     1048576    16     40.92     3.835      1.010     1.002          1.000         1.000       78.0  True
+repl1c_FIFO-W16_loop          FIFORP         1048576    16      0.01     0.000      1.010     1.000          1.000         1.000       59.6  True
+repl1c_LFSR-W16_loop          LFSRRP         1048576    16      0.01     0.000      1.080     1.000          1.000         1.000       56.7  True
+repl1c_LRU-W16_loop           LRURP          1048576    16      0.01     0.000      1.000     1.000          1.000         1.000       59.6  True
+repl1c_NMRU-W16_loop          NMRURP         1048576    16      0.01     0.000      1.080     1.000          1.000         1.000       56.5  True
+repl1c_Random-W16_loop        RandomRP       1048576    16      0.01     0.000      1.100     1.000          1.000         1.000       56.9  True
+repl1c_TreePLRU-W16_loop      TreePLRURP     1048576    16      0.01     0.000      1.000     1.000          1.000         1.000       59.6  True
+repl1c_FIFO-W16_stream        FIFORP         1048576    16    100.00     5.342      1.000     1.000          1.000         1.000       90.4  True
+repl1c_LFSR-W16_stream        LFSRRP         1048576    16     99.73     5.327      0.997     0.997          1.000         1.000       89.4  True
+repl1c_LRU-W16_stream         LRURP          1048576    16    100.00     5.342      1.000     1.000          1.000         1.000       90.3  True
+repl1c_NMRU-W16_stream        NMRURP         1048576    16     99.83     5.332      0.998     0.997          1.000         1.000       89.5  True
+repl1c_Random-W16_stream      RandomRP       1048576    16     99.78     5.330      0.998     0.997          1.000         1.000       89.4  True
+repl1c_TreePLRU-W16_stream    TreePLRURP     1048576    16    100.00     5.342      1.000     1.000          1.000         1.000       90.4  True
+repl1c_FIFO-W16_temporal      FIFORP         1048576    16     16.86     0.781      1.666     1.015          1.000         1.000       76.6  True
+repl1c_LFSR-W16_temporal      LFSRRP         1048576    16     17.03     0.789      1.683     1.016          1.000         1.000       76.6  True
+repl1c_LRU-W16_temporal       LRURP          1048576    16     10.12     0.469      1.000     1.000          1.000         1.000       76.0  True
+repl1c_NMRU-W16_temporal      NMRURP         1048576    16     16.39     0.760      1.620     1.014          1.000         1.000       76.5  True
+repl1c_Random-W16_temporal    RandomRP       1048576    16     17.06     0.791      1.686     1.016          1.000         1.000       76.7  True
+repl1c_TreePLRU-W16_temporal  TreePLRURP     1048576    16     11.13     0.516      1.099     1.002          1.000         1.000       76.1  True
+
+[L2 miss %]  group=repl1c  size=1048576  assoc=16  clusivity=mostly_incl
+workload           LRU      FIFO      LFSR      NMRU    Random  TreePLRU
+graph            40.52     42.81     42.70     42.52     42.66     40.92
+loop              0.01      0.01      0.01      0.01      0.01      0.01
+stream          100.00    100.00     99.73     99.83     99.78    100.00
+temporal         10.12     16.86     17.03     16.39     17.06     11.13
+
+[L2 MPKI]  group=repl1c  size=1048576  assoc=16  clusivity=mostly_incl
+workload           LRU      FIFO      LFSR      NMRU    Random  TreePLRU
+graph            3.798     4.013     4.005     3.987     4.000     3.835
+loop             0.000     0.000     0.000     0.000     0.000     0.000
+stream           5.342     5.342     5.327     5.332     5.330     5.342
+temporal         0.469     0.781     0.789     0.760     0.791     0.516
+
+[MPKI/base]  group=repl1c  size=1048576  assoc=16  clusivity=mostly_incl
+workload           LRU      FIFO      LFSR      NMRU    Random  TreePLRU
+graph            1.000     1.057     1.054     1.050     1.053     1.010
+loop             1.000     1.010     1.080     1.080     1.100     1.000
+stream           1.000     1.000     0.997     0.998     0.998     1.000
+temporal         1.000     1.666     1.683     1.620     1.686     1.099
+
+[cycles/base]  group=repl1c  size=1048576  assoc=16  clusivity=mostly_incl
+workload           LRU      FIFO      LFSR      NMRU    Random  TreePLRU
+graph            1.000     1.009     1.008     1.007     1.008     1.002
+loop             1.000     1.000     1.000     1.000     1.000     1.000
+stream           1.000     1.000     0.997     0.997     0.997     1.000
+temporal         1.000     1.015     1.016     1.014     1.016     1.002

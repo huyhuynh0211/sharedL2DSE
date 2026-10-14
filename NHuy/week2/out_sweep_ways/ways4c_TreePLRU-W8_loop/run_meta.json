@@ -1,0 +1,15 @@
+{
+  "valid": true,
+  "repl": "TreePLRU",
+  "incl": "nonincl",
+  "size": 524288,
+  "ways": 8,
+  "sets": 1024,
+  "warmup": 10000000,
+  "cmds": [
+    "bench_1/loop",
+    "bench_1/loop",
+    "bench_1/loop",
+    "bench_1/loop"
+  ]
+}

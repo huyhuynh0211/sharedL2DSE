@@ -1,0 +1,15 @@
+{
+  "valid": true,
+  "repl": "LRU",
+  "incl": "nonincl",
+  "size": 524288,
+  "ways": 16,
+  "sets": 512,
+  "warmup": 10000000,
+  "cmds": [
+    "bench/loop",
+    "bench/idle",
+    "bench/idle",
+    "bench/idle"
+  ]
+}

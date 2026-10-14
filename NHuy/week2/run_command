@@ -1,0 +1,120 @@
+riscv64-linux-gnu-g++ -O0 -static -o bench/loop workloads/loop.cpp
+riscv64-linux-gnu-g++ -O0 -static -o bench/idle workloads/idle.cpp
+riscv64-linux-gnu-g++ -O0 -static -o bench/graph workloads/graph.cpp
+riscv64-linux-gnu-g++ -O0 -static -o bench/stream workloads/stream.cpp
+riscv64-linux-gnu-g++ -O0 -static -o bench/temporal workloads/temporal.cpp
+
+~/gem5/build/RISCV/gem5.opt -d out/loop_base l2_flow.py --cmd bench/loop --cmd bench/idle
+
+~/gem5/build/RISCV/gem5.opt -d out/loop_w8 l2_flow.py --ways 8 --cmd bench/loop --cmd bench/idle
+
+~/gem5/build/RISCV/gem5.opt -d out/loop_fifo l2_flow.py --repl FIFO --cmd bench/loop --cmd bench/idle
+
+~/gem5/build/RISCV/gem5.opt -d out/loop_512k l2_flow.py --size 512KiB --cmd bench/loop --cmd bench/idle
+
+~/gem5/build/RISCV/gem5.opt -d out/loop_excl l2_flow.py --incl excl --cmd bench/loop --cmd bench/idle
+
+~/gem5/build/RISCV/gem5.opt -d out/mix_base l2_flow.py --cmd bench/loop --cmd bench/stream --cmd bench/temporal --cmd bench/graph
+
+# Sweep các replacement policy
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LRU-W16_loop l2_flow.py --cores 1 --repl LRU --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LRU-W16_stream l2_flow.py --cores 1 --repl LRU --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LRU-W16_temporal l2_flow.py --cores 1 --repl LRU --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LRU-W16_graph l2_flow.py --cores 1 --repl LRU --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_Random-W16_loop l2_flow.py --cores 1 --repl Random --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_Random-W16_stream l2_flow.py --cores 1 --repl Random --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_Random-W16_temporal l2_flow.py --cores 1 --repl Random --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_Random-W16_graph l2_flow.py --cores 1 --repl Random --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LFSR-W16_loop l2_flow.py --cores 1 --repl LFSR --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LFSR-W16_stream l2_flow.py --cores 1 --repl LFSR --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LFSR-W16_temporal l2_flow.py --cores 1 --repl LFSR --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_LFSR-W16_graph l2_flow.py --cores 1 --repl LFSR --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_NMRU-W16_loop l2_flow.py --cores 1 --repl NMRU --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_NMRU-W16_stream l2_flow.py --cores 1 --repl NMRU --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_NMRU-W16_temporal l2_flow.py --cores 1 --repl NMRU --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_NMRU-W16_graph l2_flow.py --cores 1 --repl NMRU --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_FIFO-W16_loop l2_flow.py --cores 1 --repl FIFO --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_FIFO-W16_stream l2_flow.py --cores 1 --repl FIFO --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_FIFO-W16_temporal l2_flow.py --cores 1 --repl FIFO --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_FIFO-W16_graph l2_flow.py --cores 1 --repl FIFO --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_TreePLRU-W16_loop l2_flow.py --cores 1 --repl TreePLRU --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_TreePLRU-W16_stream l2_flow.py --cores 1 --repl TreePLRU --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_TreePLRU-W16_temporal l2_flow.py --cores 1 --repl TreePLRU --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_repl/repl1c_TreePLRU-W16_graph l2_flow.py --cores 1 --repl TreePLRU --ways 16 --cmd bench/graph
+# Sweep inclusion policy
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_nonincl-W16_loop l2_flow.py --cores 1 --repl LRU --incl nonincl --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_nonincl-W16_stream l2_flow.py --cores 1 --repl LRU --incl nonincl --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_nonincl-W16_temporal l2_flow.py --cores 1 --repl LRU --incl nonincl --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_nonincl-W16_graph l2_flow.py --cores 1 --repl LRU --incl nonincl --ways 16 --cmd bench/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_excl-W16_loop l2_flow.py --cores 1 --repl LRU --incl excl --ways 16 --cmd bench/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_excl-W16_stream l2_flow.py --cores 1 --repl LRU --incl excl --ways 16 --cmd bench/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_excl-W16_temporal l2_flow.py --cores 1 --repl LRU --incl excl --ways 16 --cmd bench/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_incl/incl1c_excl-W16_graph l2_flow.py --cores 1 --repl LRU --incl excl --ways 16 --cmd bench/graph
+
+# Sweep way shutdown base on baseline
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W16_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W14_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 14 --size 896KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W13_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 13 --size 832KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W12_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 12 --size 768KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W11_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 11 --size 704KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W10_loop l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 10 --size 640KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W8_loop  l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W6_loop  l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 6  --size 384KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W4_loop  l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W2_loop  l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4cLRU_W1_loop  l2_flow.py --cores 4 --repl LRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/loop
+
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W16_loop l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W8_loop  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W4_loop  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W2_loop  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/loop
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W1_loop  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/loop
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W16_stream l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W8_stream  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W4_stream  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W2_stream  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/stream
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W1_stream  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/stream
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W16_temporal l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W8_temporal  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W4_temporal  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W2_temporal  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/temporal
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W1_temporal  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/temporal
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W16_graph l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W8_graph  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W4_graph  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W2_graph  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W1_graph  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/graph
+
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W16_mix l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 16 --size 1024KiB --cmd bench_1/loop --cmd bench_1/stream --cmd bench_1/temporal --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W8_mix  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 8  --size 512KiB  --cmd bench_1/loop --cmd bench_1/stream --cmd bench_1/temporal --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W4_mix  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 4  --size 256KiB  --cmd bench_1/loop --cmd bench_1/stream --cmd bench_1/temporal --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W2_mix  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 2  --size 128KiB  --cmd bench_1/loop --cmd bench_1/stream --cmd bench_1/temporal --cmd bench_1/graph
+~/gem5/build/RISCV/gem5.opt -d out_sweep_ways/ways4c_TreePLRU-W1_mix  l2_flow.py --cores 4 --repl TreePLRU --incl nonincl --ways 1  --size 64KiB   --cmd bench_1/loop --cmd bench_1/stream --cmd bench_1/temporal --cmd bench_1/graph
+# Lấy kết quả
+
+python3 parser.py --runs out --out result/result_first.csv
+python3 parser.py --runs out_sweep_repl --out result/repl1c.csv --type policy --filter ^repl1c  | tee result/repl1c.txt
+python3 parser.py --runs out_sweep_repl --out result/repl4c.csv --type policy --filter ^repl4c  | tee result/repl4c.txt
+python3 parser.py --runs out_sweep_incl --out result/incl.csv   --type incl                     | tee result/incl.txt
+
+python3 parser.py --runs out_sweep_ways --out result/ways.csv --type shutdown | tee result/ways.txt
+python3 parser.py --runs out_sweep_ways --out result/ways_vs_lru.csv --type policy --filter ^ways4c_ | tee result/ways_vs_lru.txt
+
+# Chạy power với McPAT
+#ví dụ:
+./mcpat -infile ProcessorDescriptionFiles/ARM_A9_2GHz.xml -print_level 5 <br>
+#Với project này:
+python3 mcpat_flow/gem5tomcpat.py --runs out_sweep_ways --mcpat ~/mcpat/mcpat --out result/energy.csv
