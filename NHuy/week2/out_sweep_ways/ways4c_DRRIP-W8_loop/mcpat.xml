@@ -1,0 +1,716 @@
+<?xml version="1.0" ?>
+<!--
+  template_minor4c.xml - McPAT 1.3 template cho project L2 chia se (P1)
+  He thong: N x RiscvMinorCPU in-order 1-issue, L1I/L1D rieng, L2XBar, 1 L2 chia se, 1 kenh DDR4-2400
+
+  Gia tri trong Ellipsis duoc gem5tomcpat.py tinh tu gem5:
+    S('ten')      tong cac stat khop ten; '*' = so thu tu core (cpu, cpu0, cpu1...). Thieu stat -> bao loi
+    S('ten', 0)   nhu tren, nhung thieu thi lay 0 (stat gem5 khong in khi bang 0)
+    C('duong.dan') gia tri trong config.json (danh sach thi lay phan tu dau)
+    N   so core      MHZ  xung (MHz)      CYC  so chu ky cua khoang do = simTicks / chu ky xung
+  Gia tri khong co Ellipsis la gia dinh co dinh, lay tu file mau ARM_A9_2GHz.xml cua McPAT
+  hoac theo CVA6 (ghi chu ben canh).
+-->
+<component id="root" name="root">
+	<component id="system" name="system">
+		<param name="number_of_cores" value="4"/>
+		<param name="number_of_L1Directories" value="0"/>
+		<param name="number_of_L2Directories" value="0"/>
+		<param name="number_of_L2s" value="1"/>
+		<param name="Private_L2" value="0"/>
+		<param name="number_of_L3s" value="0"/>
+		<param name="number_of_NoCs" value="1"/>
+		<param name="homogeneous_cores" value="0"/>   <!-- moi core 1 khoi rieng: gem5tomcpat.py nhan ban khoi core0 thanh core0..core(N-1), 'cpu*' -> 'cpuI' -->
+		<param name="homogeneous_L2s" value="1"/>
+		<param name="homogeneous_L1Directories" value="1"/>
+		<param name="homogeneous_L2Directories" value="1"/>
+		<param name="homogeneous_L3s" value="1"/>
+		<param name="homogeneous_ccs" value="1"/>
+		<param name="homogeneous_NoCs" value="1"/>
+		<param name="core_tech_node" value="22"/>     <!-- gia dinh: 22 nm (CVA6 tung tape-out GF 22FDX) -->
+		<param name="target_core_clockrate" value="1000"/>
+		<param name="temperature" value="360"/>       <!-- K, ~85 do C -->
+		<param name="number_cache_levels" value="2"/>
+		<param name="interconnect_projection_type" value="1"/>
+		<param name="device_type" value="2"/>         <!-- 2 = ITRS low operating power, nhu file mau ARM A9 -->
+		<param name="longer_channel_device" value="1"/>
+		<param name="Embedded" value="1"/>
+		<param name="opt_clockrate" value="1"/>
+		<param name="machine_bits" value="64"/>
+		<param name="virtual_address_width" value="39"/>   <!-- Sv39 -->
+		<param name="physical_address_width" value="56"/>  <!-- CVA6 cv64a6 PLEN -->
+		<param name="virtual_memory_page_size" value="4096"/>
+		<stat name="total_cycles" value="104610315"/>
+		<stat name="idle_cycles" value="0"/>
+		<stat name="busy_cycles" value="104610315"/>
+
+		<component id="system.core0" name="core0">
+			<param name="clock_rate" value="1000"/>
+			<param name="opt_local" value="0"/>
+			<param name="instruction_length" value="32"/>
+			<param name="opcode_width" value="7"/>
+			<param name="x86" value="0"/>
+			<param name="micro_opcode_width" value="8"/>
+			<param name="machine_type" value="1"/>        <!-- 1 = in-order -->
+			<param name="number_hardware_threads" value="1"/>
+			<param name="fetch_width" value="1"/>
+			<param name="number_instruction_fetch_ports" value="1"/>
+			<param name="decode_width" value="1"/>
+			<param name="issue_width" value="1"/>
+			<param name="peak_issue_width" value="1"/>
+			<param name="commit_width" value="1"/>
+			<param name="fp_issue_width" value="1"/>
+			<param name="prediction_width" value="1"/>
+			<param name="pipelines_per_core" value="1,1"/>
+			<param name="pipeline_depth" value="6,6"/>    <!-- CVA6: 6 tang -->
+			<param name="ALU_per_core" value="1"/>
+			<param name="MUL_per_core" value="1"/>
+			<param name="FPU_per_core" value="1"/>
+			<param name="instruction_buffer_size" value="8"/>
+			<param name="decoded_stream_buffer_size" value="8"/>
+			<param name="instruction_window_scheme" value="0"/>
+			<param name="instruction_window_size" value="8"/>
+			<param name="fp_instruction_window_size" value="8"/>
+			<param name="ROB_size" value="0"/>
+			<param name="archi_Regs_IRF_size" value="32"/>
+			<param name="archi_Regs_FRF_size" value="32"/>
+			<param name="phy_Regs_IRF_size" value="32"/>
+			<param name="phy_Regs_FRF_size" value="32"/>
+			<param name="rename_scheme" value="0"/>
+			<param name="checkpoint_depth" value="1"/>
+			<param name="register_windows_size" value="0"/>
+			<param name="LSU_order" value="inorder"/>
+			<param name="store_buffer_size" value="8"/>
+			<param name="load_buffer_size" value="2"/>
+			<param name="memory_ports" value="1"/>
+			<param name="RAS_size" value="16"/>           <!-- CVA6 co 2, nhung CACTI khong dung duoc RAS nho hon 16 muc voi dia chi 39 bit; RAS chi chiem phan rat nho -->
+			<stat name="total_instructions" value="68849002"/>
+			<stat name="int_instructions" value="68848881"/>
+			<stat name="fp_instructions" value="0"/>
+			<stat name="branch_instructions" value="6885223"/>
+			<stat name="branch_mispredictions" value="203"/>
+			<stat name="load_instructions" value="22949574"/>
+			<stat name="store_instructions" value="11474899"/>
+			<stat name="committed_instructions" value="68849002"/>
+			<stat name="committed_int_instructions" value="68848881"/>
+			<stat name="committed_fp_instructions" value="0"/>
+			<stat name="pipeline_duty_cycle" value="0.6581473538245248"/>
+			<stat name="total_cycles" value="104610315"/>
+			<stat name="idle_cycles" value="9594622"/>
+			<stat name="busy_cycles" value="95015693"/>
+			<stat name="ROB_reads" value="0"/>
+			<stat name="ROB_writes" value="0"/>
+			<stat name="rename_reads" value="0"/>
+			<stat name="rename_writes" value="0"/>
+			<stat name="fp_rename_reads" value="0"/>
+			<stat name="fp_rename_writes" value="0"/>
+			<stat name="inst_window_reads" value="68849002"/>
+			<stat name="inst_window_writes" value="68849002"/>
+			<stat name="inst_window_wakeup_accesses" value="68849002"/>
+			<stat name="fp_inst_window_reads" value="0"/>
+			<stat name="fp_inst_window_writes" value="0"/>
+			<stat name="fp_inst_window_wakeup_accesses" value="0"/>
+			<stat name="int_regfile_reads" value="84913620"/>
+			<stat name="float_regfile_reads" value="0"/>
+			<stat name="int_regfile_writes" value="52783790"/>
+			<stat name="float_regfile_writes" value="0"/>
+			<stat name="function_calls" value="2294924"/>
+			<stat name="context_switches" value="0"/>
+			<stat name="ialu_accesses" value="68849292"/>
+			<stat name="fpu_accesses" value="0"/>
+			<stat name="mul_accesses" value="0"/>
+			<stat name="cdb_alu_accesses" value="68849292"/>
+			<stat name="cdb_mul_accesses" value="0"/>
+			<stat name="cdb_fpu_accesses" value="0"/>
+			<!-- he so cho Peak Power, giu nhu file mau ARM A9 -->
+			<stat name="IFU_duty_cycle" value="0.9"/>
+			<stat name="BR_duty_cycle" value="0.72"/>
+			<stat name="LSU_duty_cycle" value="0.71"/>
+			<stat name="MemManU_I_duty_cycle" value="0.9"/>
+			<stat name="MemManU_D_duty_cycle" value="0.71"/>
+			<stat name="ALU_duty_cycle" value="0.76"/>
+			<stat name="MUL_duty_cycle" value="0.82"/>
+			<stat name="FPU_duty_cycle" value="0.0"/>
+			<stat name="ALU_cdb_duty_cycle" value="0.76"/>
+			<stat name="MUL_cdb_duty_cycle" value="0.82"/>
+			<stat name="FPU_cdb_duty_cycle" value="0.0"/>
+			<param name="number_of_BPT" value="2"/>
+			<component id="system.core0.predictor" name="PBT">
+				<param name="local_predictor_size" value="10,3"/>
+				<param name="local_predictor_entries" value="4"/>
+				<param name="global_predictor_entries" value="4096"/>
+				<param name="global_predictor_bits" value="2"/>
+				<param name="chooser_predictor_entries" value="4096"/>
+				<param name="chooser_predictor_bits" value="2"/>
+			</component>
+			<!-- che do SE cua gem5 khong mo phong TLB (stat bang 0): lay so lan doc icache / dcache, miss = 0 -->
+			<component id="system.core0.itlb" name="itlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="25245563"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<!-- icache_config: dung luong, line, so way, bank, throughput, latency, output width, policy -->
+			<component id="system.core0.icache" name="icache">
+				<param name="icache_config" value="16384,64,4,1,1,1,32,0"/>
+				<param name="buffer_sizes" value="4, 4, 4, 0"/>
+				<stat name="read_accesses" value="25245563"/>
+				<stat name="read_misses" value="98"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core0.dtlb" name="dtlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="32129623"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core0.dcache" name="dcache">
+				<param name="dcache_config" value="32768,64,8,1,1,1,32,1"/>
+				<param name="buffer_sizes" value="4, 4, 4, 4"/>
+				<stat name="read_accesses" value="20654738"/>
+				<stat name="write_accesses" value="11474885"/>
+				<stat name="read_misses" value="286905"/>
+				<stat name="write_misses" value="9"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<param name="number_of_BTB" value="2"/>
+			<component id="system.core0.BTB" name="BTB">
+				<param name="BTB_config" value="4096,4,2, 2, 1,1"/>
+				<stat name="read_accesses" value="6885532"/>
+				<stat name="write_accesses" value="100"/>
+			</component>
+		</component>
+		<component id="system.core1" name="core1">
+			<param name="clock_rate" value="1000"/>
+			<param name="opt_local" value="0"/>
+			<param name="instruction_length" value="32"/>
+			<param name="opcode_width" value="7"/>
+			<param name="x86" value="0"/>
+			<param name="micro_opcode_width" value="8"/>
+			<param name="machine_type" value="1"/>        <!-- 1 = in-order -->
+			<param name="number_hardware_threads" value="1"/>
+			<param name="fetch_width" value="1"/>
+			<param name="number_instruction_fetch_ports" value="1"/>
+			<param name="decode_width" value="1"/>
+			<param name="issue_width" value="1"/>
+			<param name="peak_issue_width" value="1"/>
+			<param name="commit_width" value="1"/>
+			<param name="fp_issue_width" value="1"/>
+			<param name="prediction_width" value="1"/>
+			<param name="pipelines_per_core" value="1,1"/>
+			<param name="pipeline_depth" value="6,6"/>    <!-- CVA6: 6 tang -->
+			<param name="ALU_per_core" value="1"/>
+			<param name="MUL_per_core" value="1"/>
+			<param name="FPU_per_core" value="1"/>
+			<param name="instruction_buffer_size" value="8"/>
+			<param name="decoded_stream_buffer_size" value="8"/>
+			<param name="instruction_window_scheme" value="0"/>
+			<param name="instruction_window_size" value="8"/>
+			<param name="fp_instruction_window_size" value="8"/>
+			<param name="ROB_size" value="0"/>
+			<param name="archi_Regs_IRF_size" value="32"/>
+			<param name="archi_Regs_FRF_size" value="32"/>
+			<param name="phy_Regs_IRF_size" value="32"/>
+			<param name="phy_Regs_FRF_size" value="32"/>
+			<param name="rename_scheme" value="0"/>
+			<param name="checkpoint_depth" value="1"/>
+			<param name="register_windows_size" value="0"/>
+			<param name="LSU_order" value="inorder"/>
+			<param name="store_buffer_size" value="8"/>
+			<param name="load_buffer_size" value="2"/>
+			<param name="memory_ports" value="1"/>
+			<param name="RAS_size" value="16"/>           <!-- CVA6 co 2, nhung CACTI khong dung duoc RAS nho hon 16 muc voi dia chi 39 bit; RAS chi chiem phan rat nho -->
+			<stat name="total_instructions" value="68849955"/>
+			<stat name="int_instructions" value="68849834"/>
+			<stat name="fp_instructions" value="0"/>
+			<stat name="branch_instructions" value="6885318"/>
+			<stat name="branch_mispredictions" value="203"/>
+			<stat name="load_instructions" value="22949893"/>
+			<stat name="store_instructions" value="11475059"/>
+			<stat name="committed_instructions" value="68849955"/>
+			<stat name="committed_int_instructions" value="68849834"/>
+			<stat name="committed_fp_instructions" value="0"/>
+			<stat name="pipeline_duty_cycle" value="0.658156463824815"/>
+			<stat name="total_cycles" value="104610315"/>
+			<stat name="idle_cycles" value="9604858"/>
+			<stat name="busy_cycles" value="95005457"/>
+			<stat name="ROB_reads" value="0"/>
+			<stat name="ROB_writes" value="0"/>
+			<stat name="rename_reads" value="0"/>
+			<stat name="rename_writes" value="0"/>
+			<stat name="fp_rename_reads" value="0"/>
+			<stat name="fp_rename_writes" value="0"/>
+			<stat name="inst_window_reads" value="68849955"/>
+			<stat name="inst_window_writes" value="68849955"/>
+			<stat name="inst_window_wakeup_accesses" value="68849955"/>
+			<stat name="fp_inst_window_reads" value="0"/>
+			<stat name="fp_inst_window_writes" value="0"/>
+			<stat name="fp_inst_window_wakeup_accesses" value="0"/>
+			<stat name="int_regfile_reads" value="84914795"/>
+			<stat name="float_regfile_reads" value="0"/>
+			<stat name="int_regfile_writes" value="52784520"/>
+			<stat name="float_regfile_writes" value="0"/>
+			<stat name="function_calls" value="2294956"/>
+			<stat name="context_switches" value="0"/>
+			<stat name="ialu_accesses" value="68850244"/>
+			<stat name="fpu_accesses" value="0"/>
+			<stat name="mul_accesses" value="0"/>
+			<stat name="cdb_alu_accesses" value="68850244"/>
+			<stat name="cdb_mul_accesses" value="0"/>
+			<stat name="cdb_fpu_accesses" value="0"/>
+			<!-- he so cho Peak Power, giu nhu file mau ARM A9 -->
+			<stat name="IFU_duty_cycle" value="0.9"/>
+			<stat name="BR_duty_cycle" value="0.72"/>
+			<stat name="LSU_duty_cycle" value="0.71"/>
+			<stat name="MemManU_I_duty_cycle" value="0.9"/>
+			<stat name="MemManU_D_duty_cycle" value="0.71"/>
+			<stat name="ALU_duty_cycle" value="0.76"/>
+			<stat name="MUL_duty_cycle" value="0.82"/>
+			<stat name="FPU_duty_cycle" value="0.0"/>
+			<stat name="ALU_cdb_duty_cycle" value="0.76"/>
+			<stat name="MUL_cdb_duty_cycle" value="0.82"/>
+			<stat name="FPU_cdb_duty_cycle" value="0.0"/>
+			<param name="number_of_BPT" value="2"/>
+			<component id="system.core1.predictor" name="PBT">
+				<param name="local_predictor_size" value="10,3"/>
+				<param name="local_predictor_entries" value="4"/>
+				<param name="global_predictor_entries" value="4096"/>
+				<param name="global_predictor_bits" value="2"/>
+				<param name="chooser_predictor_entries" value="4096"/>
+				<param name="chooser_predictor_bits" value="2"/>
+			</component>
+			<!-- che do SE cua gem5 khong mo phong TLB (stat bang 0): lay so lan doc icache / dcache, miss = 0 -->
+			<component id="system.core1.itlb" name="itlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="25245911"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<!-- icache_config: dung luong, line, so way, bank, throughput, latency, output width, policy -->
+			<component id="system.core1.icache" name="icache">
+				<param name="icache_config" value="16384,64,4,1,1,1,32,0"/>
+				<param name="buffer_sizes" value="4, 4, 4, 0"/>
+				<stat name="read_accesses" value="25245911"/>
+				<stat name="read_misses" value="98"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core1.dtlb" name="dtlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="32130069"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core1.dcache" name="dcache">
+				<param name="dcache_config" value="32768,64,8,1,1,1,32,1"/>
+				<param name="buffer_sizes" value="4, 4, 4, 4"/>
+				<stat name="read_accesses" value="20655024"/>
+				<stat name="write_accesses" value="11475045"/>
+				<stat name="read_misses" value="286908"/>
+				<stat name="write_misses" value="9"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<param name="number_of_BTB" value="2"/>
+			<component id="system.core1.BTB" name="BTB">
+				<param name="BTB_config" value="4096,4,2, 2, 1,1"/>
+				<stat name="read_accesses" value="6885626"/>
+				<stat name="write_accesses" value="100"/>
+			</component>
+		</component>
+		<component id="system.core2" name="core2">
+			<param name="clock_rate" value="1000"/>
+			<param name="opt_local" value="0"/>
+			<param name="instruction_length" value="32"/>
+			<param name="opcode_width" value="7"/>
+			<param name="x86" value="0"/>
+			<param name="micro_opcode_width" value="8"/>
+			<param name="machine_type" value="1"/>        <!-- 1 = in-order -->
+			<param name="number_hardware_threads" value="1"/>
+			<param name="fetch_width" value="1"/>
+			<param name="number_instruction_fetch_ports" value="1"/>
+			<param name="decode_width" value="1"/>
+			<param name="issue_width" value="1"/>
+			<param name="peak_issue_width" value="1"/>
+			<param name="commit_width" value="1"/>
+			<param name="fp_issue_width" value="1"/>
+			<param name="prediction_width" value="1"/>
+			<param name="pipelines_per_core" value="1,1"/>
+			<param name="pipeline_depth" value="6,6"/>    <!-- CVA6: 6 tang -->
+			<param name="ALU_per_core" value="1"/>
+			<param name="MUL_per_core" value="1"/>
+			<param name="FPU_per_core" value="1"/>
+			<param name="instruction_buffer_size" value="8"/>
+			<param name="decoded_stream_buffer_size" value="8"/>
+			<param name="instruction_window_scheme" value="0"/>
+			<param name="instruction_window_size" value="8"/>
+			<param name="fp_instruction_window_size" value="8"/>
+			<param name="ROB_size" value="0"/>
+			<param name="archi_Regs_IRF_size" value="32"/>
+			<param name="archi_Regs_FRF_size" value="32"/>
+			<param name="phy_Regs_IRF_size" value="32"/>
+			<param name="phy_Regs_FRF_size" value="32"/>
+			<param name="rename_scheme" value="0"/>
+			<param name="checkpoint_depth" value="1"/>
+			<param name="register_windows_size" value="0"/>
+			<param name="LSU_order" value="inorder"/>
+			<param name="store_buffer_size" value="8"/>
+			<param name="load_buffer_size" value="2"/>
+			<param name="memory_ports" value="1"/>
+			<param name="RAS_size" value="16"/>           <!-- CVA6 co 2, nhung CACTI khong dung duoc RAS nho hon 16 muc voi dia chi 39 bit; RAS chi chiem phan rat nho -->
+			<stat name="total_instructions" value="68850253"/>
+			<stat name="int_instructions" value="68850132"/>
+			<stat name="fp_instructions" value="0"/>
+			<stat name="branch_instructions" value="6885348"/>
+			<stat name="branch_mispredictions" value="202"/>
+			<stat name="load_instructions" value="22949991"/>
+			<stat name="store_instructions" value="11475109"/>
+			<stat name="committed_instructions" value="68850253"/>
+			<stat name="committed_int_instructions" value="68850132"/>
+			<stat name="committed_fp_instructions" value="0"/>
+			<stat name="pipeline_duty_cycle" value="0.6581593124922719"/>
+			<stat name="total_cycles" value="104610315"/>
+			<stat name="idle_cycles" value="9650962"/>
+			<stat name="busy_cycles" value="94959353"/>
+			<stat name="ROB_reads" value="0"/>
+			<stat name="ROB_writes" value="0"/>
+			<stat name="rename_reads" value="0"/>
+			<stat name="rename_writes" value="0"/>
+			<stat name="fp_rename_reads" value="0"/>
+			<stat name="fp_rename_writes" value="0"/>
+			<stat name="inst_window_reads" value="68850253"/>
+			<stat name="inst_window_writes" value="68850253"/>
+			<stat name="inst_window_wakeup_accesses" value="68850253"/>
+			<stat name="fp_inst_window_reads" value="0"/>
+			<stat name="fp_inst_window_writes" value="0"/>
+			<stat name="fp_inst_window_wakeup_accesses" value="0"/>
+			<stat name="int_regfile_reads" value="84915164"/>
+			<stat name="float_regfile_reads" value="0"/>
+			<stat name="int_regfile_writes" value="52784748"/>
+			<stat name="float_regfile_writes" value="0"/>
+			<stat name="function_calls" value="2294966"/>
+			<stat name="context_switches" value="0"/>
+			<stat name="ialu_accesses" value="68850544"/>
+			<stat name="fpu_accesses" value="0"/>
+			<stat name="mul_accesses" value="0"/>
+			<stat name="cdb_alu_accesses" value="68850544"/>
+			<stat name="cdb_mul_accesses" value="0"/>
+			<stat name="cdb_fpu_accesses" value="0"/>
+			<!-- he so cho Peak Power, giu nhu file mau ARM A9 -->
+			<stat name="IFU_duty_cycle" value="0.9"/>
+			<stat name="BR_duty_cycle" value="0.72"/>
+			<stat name="LSU_duty_cycle" value="0.71"/>
+			<stat name="MemManU_I_duty_cycle" value="0.9"/>
+			<stat name="MemManU_D_duty_cycle" value="0.71"/>
+			<stat name="ALU_duty_cycle" value="0.76"/>
+			<stat name="MUL_duty_cycle" value="0.82"/>
+			<stat name="FPU_duty_cycle" value="0.0"/>
+			<stat name="ALU_cdb_duty_cycle" value="0.76"/>
+			<stat name="MUL_cdb_duty_cycle" value="0.82"/>
+			<stat name="FPU_cdb_duty_cycle" value="0.0"/>
+			<param name="number_of_BPT" value="2"/>
+			<component id="system.core2.predictor" name="PBT">
+				<param name="local_predictor_size" value="10,3"/>
+				<param name="local_predictor_entries" value="4"/>
+				<param name="global_predictor_entries" value="4096"/>
+				<param name="global_predictor_bits" value="2"/>
+				<param name="chooser_predictor_entries" value="4096"/>
+				<param name="chooser_predictor_bits" value="2"/>
+			</component>
+			<!-- che do SE cua gem5 khong mo phong TLB (stat bang 0): lay so lan doc icache / dcache, miss = 0 -->
+			<component id="system.core2.itlb" name="itlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="25246022"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<!-- icache_config: dung luong, line, so way, bank, throughput, latency, output width, policy -->
+			<component id="system.core2.icache" name="icache">
+				<param name="icache_config" value="16384,64,4,1,1,1,32,0"/>
+				<param name="buffer_sizes" value="4, 4, 4, 0"/>
+				<stat name="read_accesses" value="25246022"/>
+				<stat name="read_misses" value="98"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core2.dtlb" name="dtlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="32130208"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core2.dcache" name="dcache">
+				<param name="dcache_config" value="32768,64,8,1,1,1,32,1"/>
+				<param name="buffer_sizes" value="4, 4, 4, 4"/>
+				<stat name="read_accesses" value="20655113"/>
+				<stat name="write_accesses" value="11475095"/>
+				<stat name="read_misses" value="286910"/>
+				<stat name="write_misses" value="9"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<param name="number_of_BTB" value="2"/>
+			<component id="system.core2.BTB" name="BTB">
+				<param name="BTB_config" value="4096,4,2, 2, 1,1"/>
+				<stat name="read_accesses" value="6885657"/>
+				<stat name="write_accesses" value="99"/>
+			</component>
+		</component>
+		<component id="system.core3" name="core3">
+			<param name="clock_rate" value="1000"/>
+			<param name="opt_local" value="0"/>
+			<param name="instruction_length" value="32"/>
+			<param name="opcode_width" value="7"/>
+			<param name="x86" value="0"/>
+			<param name="micro_opcode_width" value="8"/>
+			<param name="machine_type" value="1"/>        <!-- 1 = in-order -->
+			<param name="number_hardware_threads" value="1"/>
+			<param name="fetch_width" value="1"/>
+			<param name="number_instruction_fetch_ports" value="1"/>
+			<param name="decode_width" value="1"/>
+			<param name="issue_width" value="1"/>
+			<param name="peak_issue_width" value="1"/>
+			<param name="commit_width" value="1"/>
+			<param name="fp_issue_width" value="1"/>
+			<param name="prediction_width" value="1"/>
+			<param name="pipelines_per_core" value="1,1"/>
+			<param name="pipeline_depth" value="6,6"/>    <!-- CVA6: 6 tang -->
+			<param name="ALU_per_core" value="1"/>
+			<param name="MUL_per_core" value="1"/>
+			<param name="FPU_per_core" value="1"/>
+			<param name="instruction_buffer_size" value="8"/>
+			<param name="decoded_stream_buffer_size" value="8"/>
+			<param name="instruction_window_scheme" value="0"/>
+			<param name="instruction_window_size" value="8"/>
+			<param name="fp_instruction_window_size" value="8"/>
+			<param name="ROB_size" value="0"/>
+			<param name="archi_Regs_IRF_size" value="32"/>
+			<param name="archi_Regs_FRF_size" value="32"/>
+			<param name="phy_Regs_IRF_size" value="32"/>
+			<param name="phy_Regs_FRF_size" value="32"/>
+			<param name="rename_scheme" value="0"/>
+			<param name="checkpoint_depth" value="1"/>
+			<param name="register_windows_size" value="0"/>
+			<param name="LSU_order" value="inorder"/>
+			<param name="store_buffer_size" value="8"/>
+			<param name="load_buffer_size" value="2"/>
+			<param name="memory_ports" value="1"/>
+			<param name="RAS_size" value="16"/>           <!-- CVA6 co 2, nhung CACTI khong dung duoc RAS nho hon 16 muc voi dia chi 39 bit; RAS chi chiem phan rat nho -->
+			<stat name="total_instructions" value="68849115"/>
+			<stat name="int_instructions" value="68848994"/>
+			<stat name="fp_instructions" value="0"/>
+			<stat name="branch_instructions" value="6885234"/>
+			<stat name="branch_mispredictions" value="203"/>
+			<stat name="load_instructions" value="22949613"/>
+			<stat name="store_instructions" value="11474919"/>
+			<stat name="committed_instructions" value="68849115"/>
+			<stat name="committed_int_instructions" value="68848994"/>
+			<stat name="committed_fp_instructions" value="0"/>
+			<stat name="pipeline_duty_cycle" value="0.6581484340239296"/>
+			<stat name="total_cycles" value="104610315"/>
+			<stat name="idle_cycles" value="9639051"/>
+			<stat name="busy_cycles" value="94971264"/>
+			<stat name="ROB_reads" value="0"/>
+			<stat name="ROB_writes" value="0"/>
+			<stat name="rename_reads" value="0"/>
+			<stat name="rename_writes" value="0"/>
+			<stat name="fp_rename_reads" value="0"/>
+			<stat name="fp_rename_writes" value="0"/>
+			<stat name="inst_window_reads" value="68849115"/>
+			<stat name="inst_window_writes" value="68849115"/>
+			<stat name="inst_window_wakeup_accesses" value="68849115"/>
+			<stat name="fp_inst_window_reads" value="0"/>
+			<stat name="fp_inst_window_writes" value="0"/>
+			<stat name="fp_inst_window_wakeup_accesses" value="0"/>
+			<stat name="int_regfile_reads" value="84913759"/>
+			<stat name="float_regfile_reads" value="0"/>
+			<stat name="int_regfile_writes" value="52783876"/>
+			<stat name="float_regfile_writes" value="0"/>
+			<stat name="function_calls" value="2294928"/>
+			<stat name="context_switches" value="0"/>
+			<stat name="ialu_accesses" value="68849405"/>
+			<stat name="fpu_accesses" value="0"/>
+			<stat name="mul_accesses" value="0"/>
+			<stat name="cdb_alu_accesses" value="68849405"/>
+			<stat name="cdb_mul_accesses" value="0"/>
+			<stat name="cdb_fpu_accesses" value="0"/>
+			<!-- he so cho Peak Power, giu nhu file mau ARM A9 -->
+			<stat name="IFU_duty_cycle" value="0.9"/>
+			<stat name="BR_duty_cycle" value="0.72"/>
+			<stat name="LSU_duty_cycle" value="0.71"/>
+			<stat name="MemManU_I_duty_cycle" value="0.9"/>
+			<stat name="MemManU_D_duty_cycle" value="0.71"/>
+			<stat name="ALU_duty_cycle" value="0.76"/>
+			<stat name="MUL_duty_cycle" value="0.82"/>
+			<stat name="FPU_duty_cycle" value="0.0"/>
+			<stat name="ALU_cdb_duty_cycle" value="0.76"/>
+			<stat name="MUL_cdb_duty_cycle" value="0.82"/>
+			<stat name="FPU_cdb_duty_cycle" value="0.0"/>
+			<param name="number_of_BPT" value="2"/>
+			<component id="system.core3.predictor" name="PBT">
+				<param name="local_predictor_size" value="10,3"/>
+				<param name="local_predictor_entries" value="4"/>
+				<param name="global_predictor_entries" value="4096"/>
+				<param name="global_predictor_bits" value="2"/>
+				<param name="chooser_predictor_entries" value="4096"/>
+				<param name="chooser_predictor_bits" value="2"/>
+			</component>
+			<!-- che do SE cua gem5 khong mo phong TLB (stat bang 0): lay so lan doc icache / dcache, miss = 0 -->
+			<component id="system.core3.itlb" name="itlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="25245603"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<!-- icache_config: dung luong, line, so way, bank, throughput, latency, output width, policy -->
+			<component id="system.core3.icache" name="icache">
+				<param name="icache_config" value="16384,64,4,1,1,1,32,0"/>
+				<param name="buffer_sizes" value="4, 4, 4, 0"/>
+				<stat name="read_accesses" value="25245603"/>
+				<stat name="read_misses" value="98"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core3.dtlb" name="dtlb">
+				<param name="number_entries" value="16"/>
+				<stat name="total_accesses" value="32129677"/>
+				<stat name="total_misses" value="0"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<component id="system.core3.dcache" name="dcache">
+				<param name="dcache_config" value="32768,64,8,1,1,1,32,1"/>
+				<param name="buffer_sizes" value="4, 4, 4, 4"/>
+				<stat name="read_accesses" value="20654772"/>
+				<stat name="write_accesses" value="11474905"/>
+				<stat name="read_misses" value="286905"/>
+				<stat name="write_misses" value="9"/>
+				<stat name="conflicts" value="0"/>
+			</component>
+			<param name="number_of_BTB" value="2"/>
+			<component id="system.core3.BTB" name="BTB">
+				<param name="BTB_config" value="4096,4,2, 2, 1,1"/>
+				<stat name="read_accesses" value="6885542"/>
+				<stat name="write_accesses" value="100"/>
+			</component>
+		</component>
+
+		<!-- McPAT doc component theo thu tu: van phai co L1Directory0, L2Directory0 (so luong = 0 nen khong tinh) -->
+		<component id="system.L1Directory0" name="L1Directory0">
+			<param name="Directory_type" value="0"/>
+			<param name="Dir_config" value="2048,1,0,1, 4, 4, 8"/>
+			<param name="buffer_sizes" value="8, 8, 8, 8"/>
+			<param name="clockrate" value="1000"/>
+			<param name="ports" value="1,1,1"/>
+			<param name="device_type" value="2"/>
+			<stat name="read_accesses" value="0"/>
+			<stat name="write_accesses" value="0"/>
+			<stat name="read_misses" value="0"/>
+			<stat name="write_misses" value="0"/>
+			<stat name="conflicts" value="0"/>
+			<stat name="duty_cycle" value="0"/>
+		</component>
+		<component id="system.L2Directory0" name="L2Directory0">
+			<param name="Directory_type" value="1"/>
+			<param name="Dir_config" value="1048576,16,16,1,2, 100"/>
+			<param name="buffer_sizes" value="8, 8, 8, 8"/>
+			<param name="clockrate" value="1000"/>
+			<param name="ports" value="1,1,1"/>
+			<param name="device_type" value="0"/>
+			<stat name="read_accesses" value="0"/>
+			<stat name="write_accesses" value="0"/>
+			<stat name="read_misses" value="0"/>
+			<stat name="write_misses" value="0"/>
+			<stat name="conflicts" value="0"/>
+			<stat name="duty_cycle" value="0"/>
+		</component>
+
+		<!-- L2 chia se. L2_config: dung luong, line, so way, bank, throughput, latency (tag + data), output width, 1 = write-back
+		     Tat way: dung luong = 64 KiB x W, so way = W (giu 1024 set), lay thang tu config.json cua tung lan chay -->
+		<component id="system.L20" name="L20">
+			<param name="L2_config" value="524288,64,8,1,2,8,32,1"/>
+			<param name="buffer_sizes" value="16, 16, 16, 16"/>
+			<param name="clockrate" value="1000"/>
+			<param name="ports" value="1,1,1"/>
+			<param name="device_type" value="0"/>   <!-- 0 = ITRS high performance, nhu L2 trong file mau ARM A9. Doi 1 (low standby power) de xem do nhay -->
+			<stat name="read_accesses" value="1148064"/>
+			<!-- McPAT chi tinh doc tag cho read miss; ghi line moi vao L2 (fill) phai cong vao write_accesses.
+			     nonincl (mostly_incl): moi miss deu nap line vao L2. excl (mostly_excl): khong nap, L2 chi nhan line L1 day xuong -->
+			<stat name="write_accesses" value="511417"/>
+			<stat name="read_misses" value="506528"/>
+			<stat name="write_misses" value="0"/>
+			<stat name="conflicts" value="0"/>
+			<stat name="duty_cycle" value="1.0"/>
+		</component>
+
+		<!-- L3: so luong = 0, chi giu cho dung thu tu -->
+		<component id="system.L30" name="L30">
+			<param name="L3_config" value="16777216,64,16, 16, 16, 100,1"/>
+			<param name="clockrate" value="1000"/>
+			<param name="ports" value="1,1,1"/>
+			<param name="device_type" value="0"/>
+			<param name="buffer_sizes" value="16, 16, 16, 16"/>
+			<stat name="read_accesses" value="0"/>
+			<stat name="write_accesses" value="0"/>
+			<stat name="read_misses" value="0"/>
+			<stat name="write_misses" value="0"/>
+			<stat name="conflicts" value="0"/>
+			<stat name="duty_cycle" value="0"/>
+		</component>
+
+		<!-- L2XBar: bus, rong C('system.l2bus.width') byte -->
+		<component id="system.NoC0" name="noc0">
+			<param name="clockrate" value="1000"/>
+			<param name="type" value="0"/>
+			<param name="horizontal_nodes" value="1"/>
+			<param name="vertical_nodes" value="1"/>
+			<param name="has_global_link" value="0"/>
+			<param name="link_throughput" value="1"/>
+			<param name="link_latency" value="1"/>
+			<param name="input_ports" value="8"/>
+			<param name="output_ports" value="1"/>
+			<param name="flit_bits" value="128"/>
+			<param name="chip_coverage" value="1"/>
+			<param name="link_routing_over_percentage" value="0.5"/>
+			<stat name="total_accesses" value="3444192"/>
+			<stat name="duty_cycle" value="1"/>
+		</component>
+
+		<!-- Bo dieu khien DRAM (khong gom chip DRAM; nang luong chip DRAM lay tu gem5) -->
+		<component id="system.mc" name="mc">
+			<param name="type" value="1"/>
+			<param name="mc_clock" value="1200"/>             <!-- DDR4-2400 -->
+			<param name="peak_transfer_rate" value="19200"/>  <!-- MB/s, 64 bit x 2400 MT/s -->
+			<param name="block_size" value="64"/>
+			<param name="number_mcs" value="1"/>
+			<param name="memory_channels_per_mc" value="1"/>
+			<param name="number_ranks" value="2"/>
+			<param name="req_window_size_per_channel" value="32"/>
+			<param name="IO_buffer_size_per_channel" value="32"/>
+			<param name="databus_width" value="64"/>
+			<param name="addressbus_width" value="51"/>
+			<stat name="memory_accesses" value="506537"/>
+			<stat name="memory_reads" value="506528"/>
+			<stat name="memory_writes" value="9"/>
+			<param name="withPHY" value="1"/>
+		</component>
+		<component id="system.niu" name="niu">
+			<param name="type" value="1"/>
+			<param name="clockrate" value="350"/>
+			<param name="number_units" value="0"/>
+			<stat name="duty_cycle" value="1.0"/>
+			<stat name="total_load_perc" value="0.7"/>
+		</component>
+		<component id="system.pcie" name="pcie">
+			<param name="type" value="1"/>
+			<param name="withPHY" value="1"/>
+			<param name="clockrate" value="350"/>
+			<param name="number_units" value="0"/>
+			<param name="num_channels" value="8"/>
+			<stat name="duty_cycle" value="1.0"/>
+			<stat name="total_load_perc" value="0.7"/>
+		</component>
+		<component id="system.flashc" name="flashc">
+			<param name="number_flashcs" value="0"/>
+			<param name="type" value="1"/>
+			<param name="withPHY" value="1"/>
+			<param name="peak_transfer_rate" value="200"/>
+			<stat name="duty_cycle" value="1.0"/>
+			<stat name="total_load_perc" value="0.7"/>
+		</component>
+	</component>
+</component>

@@ -1,0 +1,53 @@
+  warning ways4c_TreePLRU-W1_loop: cpu=['system.cpu0', 'system.cpu1', 'system.cpu2', 'system.cpu3'], l1d=[]
+
+wrote 16 rows -> result/ways.csv
+
+run                       repl              size  ways  L2 miss%   L2 MPKI  MPKI/base  cyc/base  mshrMiss/miss  L2acc/L1miss  L2missLat  valid
+ways4c_TreePLRU-W16_loop  TreePLRURP     1048576    16      0.04     0.002      1.000     1.000          1.000         1.000       65.7  True
+ways4c_TreePLRU-W8_loop   TreePLRURP      524288     8     97.86     4.080   2346.411     1.158          1.000         1.000       57.6  True
+ways4c_TreePLRU-W4_loop   TreePLRURP      262144     4    100.00     4.169   2397.653     1.160          1.000         1.000       57.3  True
+ways4c_TreePLRU-W2_loop   TreePLRURP      131072     2    100.00     4.169   2397.735     1.159          1.000         1.000       57.2  True
+ways4c_TreePLRU-W1_loop   TreePLRURP       65536     1    100.00         -          -     0.000          1.000         1.000          -  -
+ways4cLRU_W16_loop        LRURP          1048576    16      0.04     0.002      1.000     1.000          1.000         1.000       64.4  True
+ways4cLRU_W14_loop        LRURP           917504    14      0.05     0.002      1.113     1.000          1.000         1.000       70.4  True
+ways4cLRU_W13_loop        LRURP           851968    13      0.05     0.002      1.117     1.000          1.000         1.000       76.5  True
+ways4cLRU_W12_loop        LRURP           786432    12     23.73     0.989    571.397     1.040          1.000         1.000       59.6  True
+ways4cLRU_W11_loop        LRURP           720896    11     79.96     3.333   1925.357     1.128          1.000         1.000       57.4  True
+ways4cLRU_W10_loop        LRURP           655360    10    100.00     4.169   2407.899     1.159          1.000         1.000       57.3  True
+ways4cLRU_W8_loop         LRURP           524288     8    100.00     4.169   2407.901     1.160          1.000         1.000       57.3  True
+ways4cLRU_W6_loop         LRURP           393216     6    100.00     4.169   2407.826     1.159          1.000         1.000       57.3  True
+ways4cLRU_W4_loop         LRURP           262144     4    100.00     4.169   2407.825     1.160          1.000         1.000       57.2  True
+ways4cLRU_W2_loop         LRURP           131072     2    100.00     4.169   2407.907     1.159          1.000         1.000       57.2  True
+ways4cLRU_W1_loop         LRURP            65536     1    100.00     4.169   2407.907     1.159          1.000         1.000       57.3  True
+
+[L2 miss %]  group=ways4c  repl=TreePLRURP  clusivity=mostly_incl
+workload           W16        W8        W4        W2        W1
+loop              0.04     97.86    100.00    100.00    100.00
+
+[L2 miss %]  group=ways4cLRU  repl=LRURP  clusivity=mostly_incl
+workload           W16       W14       W13       W12       W11       W10        W8        W6        W4        W2        W1
+loop              0.04      0.05      0.05     23.73     79.96    100.00    100.00    100.00    100.00    100.00    100.00
+
+[L2 MPKI]  group=ways4c  repl=TreePLRURP  clusivity=mostly_incl
+workload           W16        W8        W4        W2        W1
+loop             0.002     4.080     4.169     4.169         -
+
+[L2 MPKI]  group=ways4cLRU  repl=LRURP  clusivity=mostly_incl
+workload           W16       W14       W13       W12       W11       W10        W8        W6        W4        W2        W1
+loop             0.002     0.002     0.002     0.989     3.333     4.169     4.169     4.169     4.169     4.169     4.169
+
+[MPKI/base]  group=ways4c  repl=TreePLRURP  clusivity=mostly_incl
+workload           W16        W8        W4        W2        W1
+loop             1.000  2346.411  2397.653  2397.735         -
+
+[MPKI/base]  group=ways4cLRU  repl=LRURP  clusivity=mostly_incl
+workload           W16       W14       W13       W12       W11       W10        W8        W6        W4        W2        W1
+loop             1.000     1.113     1.117   571.397  1925.357  2407.899  2407.901  2407.826  2407.825  2407.907  2407.907
+
+[cycles/base]  group=ways4c  repl=TreePLRURP  clusivity=mostly_incl
+workload           W16        W8        W4        W2        W1
+loop             1.000     1.158     1.160     1.159     0.000
+
+[cycles/base]  group=ways4cLRU  repl=LRURP  clusivity=mostly_incl
+workload           W16       W14       W13       W12       W11       W10        W8        W6        W4        W2        W1
+loop             1.000     1.000     1.000     1.040     1.128     1.159     1.160     1.159     1.160     1.159     1.159

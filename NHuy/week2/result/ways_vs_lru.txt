@@ -1,0 +1,90 @@
+  warning ways4c_TreePLRU-W1_loop: cpu=['system.cpu0', 'system.cpu1', 'system.cpu2', 'system.cpu3'], l1d=[]
+
+wrote 5 rows -> result/ways_vs_lru.csv
+
+run                       repl              size  ways  L2 miss%   L2 MPKI  MPKI/base  cyc/base  mshrMiss/miss  L2acc/L1miss  L2missLat  valid
+ways4c_TreePLRU-W16_loop  TreePLRURP     1048576    16      0.04     0.002          -         -          1.000         1.000       65.7  True
+ways4c_TreePLRU-W8_loop   TreePLRURP      524288     8     97.86     4.080          -         -          1.000         1.000       57.6  True
+ways4c_TreePLRU-W4_loop   TreePLRURP      262144     4    100.00     4.169          -         -          1.000         1.000       57.3  True
+ways4c_TreePLRU-W2_loop   TreePLRURP      131072     2    100.00     4.169          -         -          1.000         1.000       57.2  True
+ways4c_TreePLRU-W1_loop   TreePLRURP       65536     1    100.00         -          -         -          1.000         1.000          -  -
+
+[L2 miss %]  group=ways4c  size=1048576  assoc=16  clusivity=mostly_incl
+workload      TreePLRU
+loop              0.04
+
+[L2 miss %]  group=ways4c  size=131072  assoc=2  clusivity=mostly_incl
+workload      TreePLRU
+loop            100.00
+
+[L2 miss %]  group=ways4c  size=262144  assoc=4  clusivity=mostly_incl
+workload      TreePLRU
+loop            100.00
+
+[L2 miss %]  group=ways4c  size=524288  assoc=8  clusivity=mostly_incl
+workload      TreePLRU
+loop             97.86
+
+[L2 miss %]  group=ways4c  size=65536  assoc=1  clusivity=mostly_incl
+workload      TreePLRU
+loop            100.00
+
+[L2 MPKI]  group=ways4c  size=1048576  assoc=16  clusivity=mostly_incl
+workload      TreePLRU
+loop             0.002
+
+[L2 MPKI]  group=ways4c  size=131072  assoc=2  clusivity=mostly_incl
+workload      TreePLRU
+loop             4.169
+
+[L2 MPKI]  group=ways4c  size=262144  assoc=4  clusivity=mostly_incl
+workload      TreePLRU
+loop             4.169
+
+[L2 MPKI]  group=ways4c  size=524288  assoc=8  clusivity=mostly_incl
+workload      TreePLRU
+loop             4.080
+
+[L2 MPKI]  group=ways4c  size=65536  assoc=1  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[MPKI/base]  group=ways4c  size=1048576  assoc=16  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[MPKI/base]  group=ways4c  size=131072  assoc=2  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[MPKI/base]  group=ways4c  size=262144  assoc=4  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[MPKI/base]  group=ways4c  size=524288  assoc=8  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[MPKI/base]  group=ways4c  size=65536  assoc=1  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[cycles/base]  group=ways4c  size=1048576  assoc=16  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[cycles/base]  group=ways4c  size=131072  assoc=2  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[cycles/base]  group=ways4c  size=262144  assoc=4  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[cycles/base]  group=ways4c  size=524288  assoc=8  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -
+
+[cycles/base]  group=ways4c  size=65536  assoc=1  clusivity=mostly_incl
+workload      TreePLRU
+loop                 -

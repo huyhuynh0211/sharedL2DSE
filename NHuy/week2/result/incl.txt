@@ -1,0 +1,40 @@
+
+wrote 8 rows -> result/incl.csv
+
+run                          repl              size  ways  L2 miss%   L2 MPKI  MPKI/base  cyc/base  mshrMiss/miss  L2acc/L1miss  L2missLat  valid
+incl1c_excl-W16_graph        LRURP          1048576    16     39.74     3.725      0.981     0.996          1.000         1.000       77.7  True
+incl1c_nonincl-W16_graph     LRURP          1048576    16     40.52     3.798      1.000     1.000          1.000         1.000       77.9  True
+incl1c_excl-W16_loop         LRURP          1048576    16      0.01     0.000      1.010     1.000          1.000         1.000       59.0  True
+incl1c_nonincl-W16_loop      LRURP          1048576    16      0.01     0.000      1.000     1.000          1.000         1.000       59.6  True
+incl1c_excl-W16_stream       LRURP          1048576    16    100.00     5.341      1.000     1.000          1.000         1.000       90.3  True
+incl1c_nonincl-W16_stream    LRURP          1048576    16    100.00     5.342      1.000     1.000          1.000         1.000       90.3  True
+incl1c_excl-W16_temporal     LRURP          1048576    16     10.09     0.468      0.997     1.000          1.000         1.000       75.9  True
+incl1c_nonincl-W16_temporal  LRURP          1048576    16     10.12     0.469      1.000     1.000          1.000         1.000       76.0  True
+
+[L2 miss %]  group=incl1c  size=1048576  assoc=16  repl=LRURP
+workload    mostly_inclmostly_excl
+graph            40.52     39.74
+loop              0.01      0.01
+stream          100.00    100.00
+temporal         10.12     10.09
+
+[L2 MPKI]  group=incl1c  size=1048576  assoc=16  repl=LRURP
+workload    mostly_inclmostly_excl
+graph            3.798     3.725
+loop             0.000     0.000
+stream           5.342     5.341
+temporal         0.469     0.468
+
+[MPKI/base]  group=incl1c  size=1048576  assoc=16  repl=LRURP
+workload    mostly_inclmostly_excl
+graph            1.000     0.981
+loop             1.000     1.010
+stream           1.000     1.000
+temporal         1.000     0.997
+
+[cycles/base]  group=incl1c  size=1048576  assoc=16  repl=LRURP
+workload    mostly_inclmostly_excl
+graph            1.000     0.996
+loop             1.000     1.000
+stream           1.000     1.000
+temporal         1.000     1.000
