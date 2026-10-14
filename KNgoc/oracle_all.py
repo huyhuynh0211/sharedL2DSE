@@ -7,14 +7,14 @@ import subprocess
 import sys
 from collections import OrderedDict
 
-LINE = 64                 # byte mỗi line
-L1_SETS, L1_WAYS = 64, 8  # L1D 32 KiB, 8 way
-L2_SETS = 1024            # L2 giữ 1024 set khi tắt way
-MAXW = 16                 # số way tối đa của L2
+LINE = 64                 
+L1_SETS, L1_WAYS = 64, 8  
+L2_SETS = 1024            
+MAXW = 16                 
 BIN = "./l2traffic/l2traffic_native"
 
 
-# ============================================================ mô hình cache
+#mô hình cache
 class Cache:
     """Cache set-associative, LRU thật. Mỗi set là OrderedDict: đầu = cũ nhất, cuối = mới nhất."""
 
@@ -26,12 +26,12 @@ class Cache:
         """Trả True nếu hit, False nếu miss."""
         line = addr // LINE
         s = self.data[line % self.sets]
-        if line in s:                    # HIT: đưa line lên "mới nhất"
+        if line in s:                   
             s.move_to_end(line)
             return True
-        if len(s) >= self.ways:          # MISS + set đầy: đuổi line cũ nhất (LRU)
+        if len(s) >= self.ways:          
             s.popitem(last=False)
-        s[line] = True                   # thêm line mới vào cuối (mới nhất)
+        s[line] = True                   
         return False
 
 
@@ -41,7 +41,7 @@ class CacheTick:
 
     def __init__(self, sets, ways):
         self.sets, self.ways, self.t = sets, ways, 0
-        self.data = [dict() for _ in range(sets)]      # line -> lastTouchTick
+        self.data = [dict() for _ in range(sets)]      
 
     def access(self, addr):
         self.t += 1
@@ -51,12 +51,12 @@ class CacheTick:
             s[line] = self.t
             return True
         if len(s) >= self.ways:
-            del s[min(s, key=s.get)]                   # tick nhỏ nhất = cũ nhất
+            del s[min(s, key=s.get)]                 
         s[line] = self.t
         return False
 
 
-# ============================================================ chuỗi địa chỉ
+#  chuỗi địa chỉ
 def read_trace(path):
     """Đọc file trace do `l2traffic_native ... dump=N > file.csv` tạo ra."""
     addrs = []
@@ -76,7 +76,7 @@ def gen_trace(args, n):
             yield int(ln.split(",")[0])
 
 
-# ============================================================ oracle v1: mô phỏng trực tiếp
+# oracle v1: mô phỏng trực tiếp
 def run(addrs, l2_ways, warmup, cache_cls=Cache):
     """L1D -> L2 với W way. Trả (số truy cập, L1 miss, L2 truy cập, L2 miss), bỏ `warmup` truy cập đầu."""
     l1 = cache_cls(L1_SETS, L1_WAYS)
@@ -106,7 +106,7 @@ def cmd_trace(a):
               f"L2 acc {l2a:7,}   L2 miss {100 * l2m / max(1, l2a):6.2f}%")
 
 
-# ============================================================ quét stream (vách 64K x W)
+# quét stream (vách 64K x W)
 FOOTPRINTS_K = [128, 256, 384, 512, 640, 768, 896, 1024, 1280, 1536, 2048]
 WAYS_SWEEP = [16, 12, 8, 4, 2]
 PASSES = 3                               # 1 lượt làm nóng + 2 lượt đếm
@@ -133,7 +133,7 @@ def cmd_sweep(a):
     print("đã ghi validation/oracle_stream_sweep.csv")
 
 
-# ============================================================ oracle v2: stack distance
+# oracle v2: stack distance
 # tên: (tham số workload, số truy cập mỗi lượt, số lượt đo) — giống hệt lúc chạy gem5 (roi=1, warm=1)
 WORKLOADS = {
     "loop768K":         ("mode=loop footprint=768K",                 12288,  2),
@@ -152,10 +152,10 @@ def profile(args, per_pass, passes):
     """1 lần chạy -> bảng đếm stack distance ở L2 (theo từng set).
     distance = vị trí line trong danh sách LRU của set (0 = mới nhất). Hit với W way <=> distance < W."""
     l1 = Cache(L1_SETS, L1_WAYS)
-    l2 = [[] for _ in range(L2_SETS)]            # mỗi set: danh sách line, mới nhất đứng đầu
-    hist = [0] * (MAXW + 1)                      # hist[MAXW] = không nằm trong 16 line mới nhất
+    l2 = [[] for _ in range(L2_SETS)]            
+    hist = [0] * (MAXW + 1)                      
     for i, addr in enumerate(gen_trace(args, per_pass * (1 + passes))):
-        if l1.access(addr):                      # hit L1: L2 không thấy
+        if l1.access(addr):                      
             continue
         line = addr // LINE
         s2 = l2[line % L2_SETS]
@@ -163,10 +163,10 @@ def profile(args, per_pass, passes):
             d = s2.index(line)
             s2.remove(line)
         else:
-            d = MAXW                             # miss với mọi W <= 16
+            d = MAXW                            
         s2.insert(0, line)
         del s2[MAXW:]
-        if i >= per_pass:                        # bỏ lượt đầu (làm nóng)
+        if i >= per_pass:                        
             hist[d] += 1
     return hist
 
@@ -194,10 +194,10 @@ def cmd_sd(a):
     print("đã ghi validation/oracle_sd.csv")
 
 
-# ============================================================ so sánh với gem5
+#  so sánh với gem5
 def _read_stats():
     sys.path.insert(0, "l2traffic")
-    from check_run import read_stats        # đọc khối stats đầu (vùng ROI)
+    from check_run import read_stats        
     return read_stats
 
 
@@ -238,7 +238,7 @@ def cmd_cmp_sd(a):
         print(f"{os.path.basename(d):22s} {p:7.1f}% {g:7.2f}% {g - p:+6.1f}{flag}")
 
 
-# ============================================================ tự kiểm tra
+# tự kiểm tra
 def cmd_check(a):
     args, per_pass = "mode=temporal hot=512K cold=4M hotpct=90", 73728
     addrs = list(gen_trace(args, per_pass * 5))
