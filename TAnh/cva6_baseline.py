@@ -46,6 +46,9 @@ BASELINE = {
            "repl": "lru", "clusivity": "mostly_incl", "writeback_clean": False,
            "mshrs": 32, "tgts_per_mshr": 12, "write_buffers": 16},
     "dram": "DDR4_2400_8x8",                # gem5 mô hình theo ns -> đúng ở mọi clock
+    # Các lựa chọn khác (xem _attach_memory):
+    #   DDR5_4400_4x8 | DDR5_6400_4x8 | DDR5_8400_4x8   mô hình DRAM có sẵn của gem5
+    #   dramsim3:DDR5_16Gb_x8_4800.ini                   DRAMsim3 (cần build gem5 kèm DRAMsim3)
     "warmup_cycles": 2_000_000,
     "measure_cycles": 10_000_000,           # 0 = chạy tới khi mọi tiến trình kết thúc
 }
@@ -74,6 +77,49 @@ def _set(p, key, value):
     if path[-1] not in node:
         raise KeyError(f"Không có tham số '{key}' trong baseline")
     node[path[-1]] = value
+
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+DRAMSIM3_DIR = os.environ.get("DRAMSIM3_DIR",
+                              os.path.expanduser("~/gem5/ext/dramsim3/DRAMsim3"))
+
+
+def _dram_interface(name):
+    """Tên interface DRAM của gem5 -> đối tượng. DDR5/LPDDR5 nằm trong thư viện gem5 chuẩn."""
+    if name in globals():
+        return globals()[name]()
+    for mod in ("ddr5", "lpddr5", "hbm", "gddr"):
+        if name.upper().startswith(mod.upper()):
+            lib = __import__(f"gem5.components.memory.dram_interfaces.{mod}", fromlist=[name])
+            if hasattr(lib, name):
+                return getattr(lib, name)()
+    raise KeyError(f"Không có interface DRAM '{name}' trong gem5")
+
+
+def _dramsim3_ini(name):
+    for d in ("", os.path.join(HERE, "dram_configs"), os.path.join(DRAMSIM3_DIR, "configs")):
+        f = os.path.join(d, name) if d else name
+        if os.path.isfile(f):
+            return os.path.abspath(f)
+    raise FileNotFoundError(f"Không thấy {name} (tìm trong dram_configs/ và {DRAMSIM3_DIR}/configs)")
+
+
+def _attach_memory(system, p):
+    """p['dram'] = tên interface gem5 (MemCtrl) hoặc 'dramsim3:<file.ini>' (DRAMsim3)."""
+    name = p["dram"]
+    if name.startswith("dramsim3:"):
+        if "DRAMsim3" not in globals():
+            raise RuntimeError("gem5 này chưa build kèm DRAMsim3: xem README, mục DRAMsim3")
+        out = os.path.join(m5.options.outdir, "dramsim3")
+        os.makedirs(out, exist_ok=True)
+        system.mem_ctrl = DRAMsim3(configFile=_dramsim3_ini(name.split(":", 1)[1]),
+                                   filePath=out + "/")
+        system.mem_ctrl.range = system.mem_ranges[0]
+    else:
+        system.mem_ctrl = MemCtrl()
+        system.mem_ctrl.dram = _dram_interface(name)
+        system.mem_ctrl.dram.range = system.mem_ranges[0]
+    system.mem_ctrl.port = system.membus.mem_side_ports
 
 
 def make_params(clock="100MHz", overrides=None):
@@ -105,7 +151,7 @@ def _cache(c, **extra):
     return Cache(size=c["size"], assoc=c["assoc"], tag_latency=c["lat"], data_latency=c["lat"],
                  response_latency=c["lat"], mshrs=c["mshrs"], tgts_per_mshr=c["tgts_per_mshr"],
                  write_buffers=c["write_buffers"], replacement_policy=globals()[REPL[c["repl"]]](),
-                 writeback_clean=False, **extra)
+                 **{"writeback_clean": False, **extra})
 
 
 def build_system(p, binary, cmd_per_core):
@@ -138,7 +184,9 @@ def build_system(p, binary, cmd_per_core):
 
     for cpu in system.cpu:
         cpu.icache = _cache(p["l1i"], is_read_only=True)
-        cpu.dcache = _cache(p["l1d"])
+        # L2 exclusive: L1D phải gửi cả line sạch khi đuổi, nếu không L2 không giữ được
+        # dữ liệu chỉ-đọc (khuyến nghị của gem5 cho mostly_excl)
+        cpu.dcache = _cache(p["l1d"], writeback_clean=p["l2"]["clusivity"] == "mostly_excl")
         cpu.icache_port = cpu.icache.cpu_side
         cpu.dcache_port = cpu.dcache.cpu_side
         cpu.icache.mem_side = system.noc.cpu_side_ports
@@ -147,10 +195,7 @@ def build_system(p, binary, cmd_per_core):
     system.l2.cpu_side = system.noc.mem_side_ports
     system.l2.mem_side = system.membus.cpu_side_ports
 
-    system.mem_ctrl = MemCtrl()
-    system.mem_ctrl.dram = globals()[p["dram"]]()
-    system.mem_ctrl.dram.range = system.mem_ranges[0]
-    system.mem_ctrl.port = system.membus.mem_side_ports
+    _attach_memory(system, p)
     system.system_port = system.membus.cpu_side_ports
 
     system.workload = SEWorkload.init_compatible(binary)
