@@ -1,6 +1,7 @@
 import m5
 from m5.objects import *
 import argparse
+from pathlib import Path
 
 REPL = {
     "LRU":      LRURP,
@@ -9,11 +10,19 @@ REPL = {
     "TreePLRU": TreePLRURP,
 }
 
+NUM_CPUS = 4
+
 parser = argparse.ArgumentParser()
-parser.add_argument("--l1d_size", default="16KiB")
-parser.add_argument("--l1d_assoc", type=int, default=4)
-parser.add_argument("--l1d_repl", choices=REPL.keys(), default="LRU")
+parser.add_argument("--l2_size", default="1MiB")
+parser.add_argument("--l2_assoc", type=int, default=16)
+parser.add_argument("--l2_repl", choices=REPL.keys(), default="LRU")
+parser.add_argument("--bin_dir", default=".",
+                    help="folder that holds the workload binaries")
+parser.add_argument("--workload", nargs=NUM_CPUS, required=True, metavar="BINARY",
+                    help="one binary per core, e.g. --workload loop loop empty empty")
 args = parser.parse_args()
+
+binaries = [str(Path(args.bin_dir) / (name + ".riscv")) for name in args.workload]
 
 class L1Cache(Cache):
     tag_latency = 2
@@ -26,7 +35,7 @@ class L2Cache(Cache):
     tag_latency = 10
     data_latency = 10
     response_latency = 10
-    mshrs = 20
+    mshrs = 32
     tgts_per_mshr = 12
 
 #System
@@ -36,43 +45,42 @@ system.mem_mode = "timing"
 system.mem_ranges = [AddrRange("512MiB")]
 system.cache_line_size = 64
 
-#CPU
-system.cpu = RiscvMinorCPU()
+#CPUs
+system.cpu = [RiscvMinorCPU(cpu_id=i) for i in range(NUM_CPUS)]
 
-#L1 Caches
-system.cpu.icache = L1Cache(size="16KiB", assoc=4)
-system.cpu.dcache = L1Cache(size=args.l1d_size, assoc=args.l1d_assoc, replacement_policy=REPL[args.l1d_repl]())
-system.cpu.icache.cpu_side = system.cpu.icache_port
-system.cpu.dcache.cpu_side = system.cpu.dcache_port
-
-#L2 Caches and Bus
+#Private L1s, all connected to the shared L2 bus
 system.l2bus = L2XBar()
-system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
-system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+for cpu in system.cpu:
+    cpu.icache = L1Cache(size="16KiB", assoc=4)
+    cpu.dcache = L1Cache(size="32KiB", assoc=8)
+    cpu.icache.cpu_side = cpu.icache_port
+    cpu.dcache.cpu_side = cpu.dcache_port
+    cpu.icache.mem_side = system.l2bus.cpu_side_ports
+    cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+    cpu.createInterruptController()
 
-system.l2cache = L2Cache(size="256KiB", assoc=16)
+#Shared L2
+system.l2cache = L2Cache(size=args.l2_size, assoc=args.l2_assoc,
+                         replacement_policy=REPL[args.l2_repl]())
 system.l2cache.cpu_side = system.l2bus.mem_side_ports
 
 #DRAM and Bus
 system.membus = SystemXBar()
 system.l2cache.mem_side = system.membus.cpu_side_ports
-
-system.cpu.createInterruptController()
 system.system_port = system.membus.cpu_side_ports
 
 system.mem_ctrl = MemCtrl()
-system.mem_ctrl.dram = DDR3_1600_8x8()
+system.mem_ctrl.dram = DDR4_2400_8x8()
 system.mem_ctrl.dram.range = system.mem_ranges[0]
 system.mem_ctrl.port = system.membus.mem_side_ports
 
-#Running workload
-binary = "dse/test/workload"
-system.workload = SEWorkload.init_compatible(binary)
-
-process = Process()
-process.cmd = [binary]
-system.cpu.workload = process
-system.cpu.createThreads()
+#Workloads, one process per core
+system.workload = SEWorkload.init_compatible(binaries[0])
+for i, cpu in enumerate(system.cpu):
+    process = Process(pid=100 + i)
+    process.cmd = [binaries[i]]
+    cpu.workload = process
+    cpu.createThreads()
 
 #Start sim
 root = Root(full_system=False, system=system)
