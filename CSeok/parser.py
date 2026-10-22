@@ -1,22 +1,22 @@
+import argparse
 import csv
+import json
 from pathlib import Path
 
-RUNS = Path("dse/test/runs")
-OUT  = Path("dse/test/results.csv")
+NUM_CPUS = 4
+L2_HIT_CYCLES = 10       # L2 latency set in model.py (assumed)
+TICKS_PER_CYCLE = 1000   # 1 GHz clock: 1 cycle = 1000 ticks
 
-WANTED = {
-    "sim_ticks":        "simTicks",
-    "insts":            "simInsts",
-    "cycles":           "system.cpu.numCycles",
-    "l1d_accesses":     "system.cpu.dcache.demandAccesses::total",
-    "l1d_misses":       "system.cpu.dcache.demandMisses::total",
-    "l1d_miss_rate":    "system.cpu.dcache.demandMissRate::total",
-    "l1d_miss_lat_ps":  "system.cpu.dcache.demandAvgMissLatency::total",
-    "l2_misses":        "system.l2cache.demandMisses::total",
-}
+parser = argparse.ArgumentParser(description="Collect a sweep's stats into one CSV")
+parser.add_argument("--runs", required=True,
+                    help="sweep folder, e.g. CSeok/runs")
+parser.add_argument("--out",
+                    help="CSV file to write (default: results.csv inside --runs)")
+args = parser.parse_args()
 
-HIT_CYCLES = 2
-TICKS_PER_CYCLE = 1000
+runs = Path(args.runs)
+out = Path(args.out) if args.out else runs / "results.csv"
+
 
 def read_stats(path):
     stats = {}
@@ -30,48 +30,91 @@ def read_stats(path):
             continue
     return stats
 
-def params_from_name(name):
-    parts = name.split("_")
-    size_kib = int(parts[1].replace("KiB", ""))
-    assoc = int(parts[2][1:])
-    repl = parts[3]
-    return size_kib, assoc, repl
+
+# gem5 leaves out stats that are zero, so a missing stat counts as 0.
+# A stat that is missing in EVERY run is probably a typo; we report those at the end.
+asked = set()
+found = set()
+
+def get(stats, name):
+    asked.add(name)
+    if name in stats:
+        found.add(name)
+        return stats[name]
+    return 0
+
+
+def div(a, b):
+    if b == 0:
+        return ""
+    return a / b
+
+
+def size_kib(size):
+    if size.endswith("MiB"):
+        return int(size[:-3]) * 1024
+    return int(size[:-3])
+
 
 rows = []
-for run_dir in RUNS.iterdir():
+for run_dir in sorted(runs.iterdir()):
+    if not run_dir.is_dir():
+        continue
     stats_file = run_dir / "stats.txt"
     if not stats_file.exists() or stats_file.stat().st_size == 0:
         print(f"skipping {run_dir.name}: no stats")
         continue
 
     stats = read_stats(stats_file)
-    size_kib, assoc, repl = params_from_name(run_dir.name)
-    row = {"run": run_dir.name, "l1d_kib": size_kib, "l1d_assoc": assoc, "l1d_repl": repl}
+    params = json.loads((run_dir / "params.json").read_text())
 
-    for column, stat_name in WANTED.items():
-        if stat_name not in stats:
-            print(f"warning: {stat_name} missing in {run_dir.name}")
-        row[column] = stats.get(stat_name, "")
+    # settings of this run, straight from params.json
+    row = {"run": run_dir.name}
+    row.update(params)
+    row["l2_kib"] = size_kib(params["l2_size"])
+    row["sim_ticks"] = get(stats, "simTicks")
 
-    row["cpi"] = row["cycles"] / row["insts"]
-    row["l1d_mpki"] = 1000 * row["l1d_misses"] / row["insts"]
+    # shared L2, all cores together
+    l2_acc = get(stats, "system.l2cache.demandAccesses::total")
+    l2_miss = get(stats, "system.l2cache.demandMisses::total")
+    l2_lat = get(stats, "system.l2cache.demandAvgMissLatency::total")
+    row["l2_accesses"] = l2_acc
+    row["l2_misses"] = l2_miss
+    row["l2_miss_rate"] = div(l2_miss, l2_acc)
+    row["l2_miss_lat_cyc"] = l2_lat / TICKS_PER_CYCLE
+    if l2_acc:
+        row["l2_amat_cyc"] = L2_HIT_CYCLES + row["l2_miss_rate"] * row["l2_miss_lat_cyc"]
 
-    miss_rate = row["l1d_miss_rate"]
-    if row["l1d_misses"]:
-        miss_penalty = row["l1d_miss_lat_ps"] / TICKS_PER_CYCLE
-    else:
-        miss_penalty = 0
+    # each core on its own
+    l1_misses = 0
+    for c in range(NUM_CPUS):
+        cpu = f"system.cpu{c}"
+        insts = get(stats, f"{cpu}.commitStats0.numInsts")
+        l1d_acc = get(stats, f"{cpu}.dcache.demandAccesses::total")
+        l1d_miss = get(stats, f"{cpu}.dcache.demandMisses::total")
+        l1i_miss = get(stats, f"{cpu}.icache.demandMisses::total")
+        l2_miss_c = (get(stats, f"system.l2cache.demandMisses::cpu{c}.data")
+                     + get(stats, f"system.l2cache.demandMisses::cpu{c}.inst"))
 
-    row["l1d_miss_penalty_cyc"] = round(miss_penalty, 2)
-    row["amat_cyc"] = round(HIT_CYCLES + miss_rate * miss_penalty, 3)
+        row[f"c{c}_insts"] = insts
+        row[f"c{c}_l1d_miss_rate"] = div(l1d_miss, l1d_acc)
+        row[f"c{c}_l2_misses"] = l2_miss_c
+        row[f"c{c}_l2_mpki"] = div(1000 * l2_miss_c, insts)
+        l1_misses += l1d_miss + l1i_miss
+
+    # sanity check: every L1 miss becomes one L2 access, so this should be close to 1
+    row["check_l2acc_per_l1miss"] = div(l2_acc, l1_misses)
 
     rows.append(row)
 
-rows.sort(key=lambda r: (r["l1d_kib"], r["l1d_assoc"], r["l1d_repl"]))
+if not rows:
+    raise SystemExit(f"no finished runs in {runs}")
 
-with OUT.open("w", newline="") as f:
+with out.open("w", newline="") as f:
     writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
     writer.writeheader()
     writer.writerows(rows)
 
-print(f"wrote {len(rows)} rows to {OUT}")
+print(f"wrote {len(rows)} rows to {out}")
+for name in sorted(asked - found):
+    print(f"warning: {name} not found in any run, check the name")
