@@ -1,0 +1,64 @@
+/home/hindrance235/gem5/build/RISCV/gem5.opt -d /home/hindrance235/gem5/my_project/baseline/results/100MHz_quick/assoc/cap_a1 /home/hindrance235/gem5/my_project/baseline/cva6_baseline.py --binary /home/hindrance235/gem5/my_project/baseline/build/l2_workloads --clock 100MHz --footprint 768KiB --args cap {fp} 64 {core} 1 0 8 --tag cap_a1 --set l2.size=1MiB --set l2.assoc=1 --set warmup_cycles=300000 --set measure_cycles=1000000
+
+Global frequency set at 1000000000000 ticks per second
+warn: No dot file generated. Please install pydot to generate the dot file and pdf.
+src/mem/dram_interface.cc:690: warn: DRAM device capacity (16384 Mbytes) does not match the address range assigned (512 Mbytes)
+src/arch/riscv/isa.cc:321: info: RVV enabled, VLEN = 256 bits, ELEN = 64 bits
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/base/statistics.hh:279: warn: One of the stats is a legacy stat. Legacy stat is a stat that does not belong to any statistics::Group. Legacy stat is deprecated.
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedStore
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedFaultOnlyFirstLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedStore
+src/arch/riscv/isa.cc:321: info: RVV enabled, VLEN = 256 bits, ELEN = 64 bits
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedStore
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedFaultOnlyFirstLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedStore
+src/arch/riscv/isa.cc:321: info: RVV enabled, VLEN = 256 bits, ELEN = 64 bits
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedStore
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedFaultOnlyFirstLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedStore
+src/arch/riscv/isa.cc:321: info: RVV enabled, VLEN = 256 bits, ELEN = 64 bits
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedStore
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdUnitStrideSegmentedFaultOnlyFirstLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedLoad
+src/cpu/minor/execute.cc:164: warn: No functional unit for OpClass SimdStrideSegmentedStore
+system.remote_gdb: Listening for connections on port 7002
+gem5 Simulator System.  https://www.gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 version 25.1.0.1
+gem5 compiled Oct  2 2026 05:00:52
+gem5 started Oct 21 2026 14:44:48
+gem5 executing on WORKSTATION, pid 9080
+command line: /home/hindrance235/gem5/build/RISCV/gem5.opt -d /home/hindrance235/gem5/my_project/baseline/results/100MHz_quick/assoc/cap_a1 /home/hindrance235/gem5/my_project/baseline/cva6_baseline.py --binary /home/hindrance235/gem5/my_project/baseline/build/l2_workloads --clock 100MHz --footprint 768KiB --args 'cap {fp} 64 {core} 1 0 8' --tag cap_a1 --set l2.size=1MiB --set l2.assoc=1 --set warmup_cycles=300000 --set measure_cycles=1000000
+
+========================================================================
+Baseline 4 core CVA6 @ 100MHz (10 ns/chu kỳ); L2 1024 KiB / 1w / 16384 set, hit 2 chu kỳ, repl lru
+Workload: /home/hindrance235/gem5/my_project/baseline/build/l2_workloads cap 196608 64 0 1 0 8  (core 0)
+========================================================================
+src/sim/syscall_emul.cc:97: warn: ignoring syscall set_robust_list(...)
+      (further warnings will be suppressed)
+src/sim/syscall_emul.cc:108: warn: ignoring syscall rseq(...) returning -ENOSYS
+src/sim/syscall_emul.cc:108: warn: ignoring syscall rseq(...) returning -ENOSYS
+src/sim/syscall_emul.cc:108: warn: ignoring syscall rseq(...) returning -ENOSYS
+src/sim/syscall_emul.cc:108: warn: ignoring syscall rseq(...) returning -ENOSYS
+src/sim/syscall_emul.hh:1127: warn: readlink() called on '/proc/self/exe' may yield unexpected results in various settings.
+      Returning '/home/hindrance235/gem5/my_project/baseline/build/l2_workloads'
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/mem_state.cc:443: info: Increasing stack size by one page.
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+src/sim/syscall_emul.cc:86: warn: ignoring syscall mprotect(...)
+[*] simulate() limit reached
+[*] cycles=1000000 IPC=0.518 L1D miss=13.65% L2 miss=41.14% L2 MPKI=11.874 L1D miss lat=21.6 AMAT=3.954 chu kỳ
+[*] Sanity L2 acc / Σ L1 miss = 1.000 (≈1); đã ghi /home/hindrance235/gem5/my_project/baseline/results/100MHz_quick/assoc/cap_a1/summary.json

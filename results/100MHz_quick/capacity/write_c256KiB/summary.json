@@ -1,0 +1,79 @@
+{
+  "tag": "write_c256KiB",
+  "valid": true,
+  "exit_cause": "simulate() limit reached",
+  "params": {
+    "num_cores": 4,
+    "line_bytes": 64,
+    "mem_size": "512MiB",
+    "core": {
+      "issue_width": 1,
+      "commit_width": 2,
+      "decode_to_execute_delay": 2
+    },
+    "l1i": {
+      "size": "16KiB",
+      "assoc": 4,
+      "lat": 1,
+      "mshrs": 1,
+      "tgts_per_mshr": 8,
+      "write_buffers": 8,
+      "repl": "random"
+    },
+    "l1d": {
+      "size": "32KiB",
+      "assoc": 8,
+      "lat": 1,
+      "mshrs": 1,
+      "tgts_per_mshr": 8,
+      "write_buffers": 8,
+      "repl": "random"
+    },
+    "noc": {
+      "width": 16,
+      "frontend": 1,
+      "forward": 1,
+      "response": 1
+    },
+    "l2": {
+      "prod_size": "1MiB",
+      "full_ways": 16,
+      "active_ways": 16,
+      "size": "256KiB",
+      "assoc": null,
+      "hit": 2,
+      "resp": 1,
+      "repl": "lru",
+      "clusivity": "mostly_incl",
+      "writeback_clean": false,
+      "mshrs": 32,
+      "tgts_per_mshr": 12,
+      "write_buffers": 16
+    },
+    "dram": "DDR4_2400_8x8",
+    "warmup_cycles": 300000,
+    "measure_cycles": 1000000,
+    "clock": "100MHz",
+    "l2_bytes": 262144,
+    "l2_assoc": 16,
+    "l2_sets": 256,
+    "ns_per_cycle": 10.0
+  },
+  "metrics": {
+    "cycles": 1000000.0,
+    "insts": 2066460.0,
+    "ipc_mean": 0.5166171955682758,
+    "l1d_miss_rate": 0.10212190524281982,
+    "l2_miss_rate": 0.9932256810134873,
+    "l1d_mpki": 23.096503198706966,
+    "l2_mpki": 23.484606525168648,
+    "l1d_miss_lat_cyc": 27.231708665771382,
+    "amat_l1d_cyc": 3.7809539719659804,
+    "l2_accesses": 48861.0,
+    "l2_misses": 48530.0,
+    "l2_mshr_hits": 0.0,
+    "l2_upgrade_misses": 0.0,
+    "l1d_writebacks": 34529.0,
+    "sanity_l2acc_over_l1miss": 1.0000614024315362
+  }
+}
