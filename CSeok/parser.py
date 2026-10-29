@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 NUM_CPUS = 4
-L2_HIT_CYCLES = 10       # L2 latency set in model.py (assumed)
-TICKS_PER_CYCLE = 1000   # 1 GHz clock: 1 cycle = 1000 ticks
+L2_HIT_CYCLES = 2       # L2 latency set in model.py (assumed)
+TICKS_PER_CYCLE = 10000   # 1 GHz clock: 1 cycle = 1000 ticks
 
 parser = argparse.ArgumentParser(description="Collect a sweep's stats into one CSV")
 parser.add_argument("--runs", required=True,
@@ -84,6 +84,8 @@ for run_dir in sorted(runs.iterdir()):
     row["l2_miss_lat_cyc"] = l2_lat / TICKS_PER_CYCLE
     if l2_acc:
         row["l2_amat_cyc"] = L2_HIT_CYCLES + row["l2_miss_rate"] * row["l2_miss_lat_cyc"]
+    else:
+        row["l2_amat_cyc"] = ""
 
     # each core on its own
     l1_misses = 0

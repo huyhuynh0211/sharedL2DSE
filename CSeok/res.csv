@@ -1,0 +1,7 @@
+run,mix,l2_size,l2_kib,sim_ticks,l2_accesses,l2_misses,l2_miss_rate,l2_miss_lat_cyc,l2_amat_cyc,c0_insts,c0_l1d_miss_rate,c0_l2_misses,c0_l2_mpki,c1_insts,c1_l1d_miss_rate,c1_l2_misses,c1_l2_mpki,c2_insts,c2_l1d_miss_rate,c2_l2_misses,c2_l2_mpki,c3_insts,c3_l1d_miss_rate,c3_l2_misses,c3_l2_mpki,check_l2acc_per_l1miss
+000_coremark_256KiB,coremark,256KiB,256,100000000000.0,0,0,,0.0,,7468903.0,0.0,0,0.0,0,,0,,0,,0,,0,,0,,
+001_coremark_1MiB,coremark,1MiB,1024,100000000000.0,0,0,,0.0,,7468908.0,0.0,0,0.0,0,,0,,0,,0,,0,,0,,
+002_coremark_4MiB,coremark,4MiB,4096,100000000000.0,0,0,,0.0,,7468908.0,0.0,0,0.0,0,,0,,0,,0,,0,,0,,
+003_coremark_x4_256KiB,coremark_x4,256KiB,256,100000000000.0,2.0,0,0.0,0.0,2.0,7468857.0,0.0,0,0.0,7468863.0,0.0,0,0.0,7468884.0,0.0,0,0.0,7468864.0,0.0,0,0.0,1.0
+004_coremark_x4_1MiB,coremark_x4,1MiB,1024,100000000000.0,2.0,0,0.0,0.0,2.0,7468866.0,0.0,0,0.0,7468867.0,0.0,0,0.0,7468894.0,0.0,0,0.0,7468871.0,0.0,0,0.0,1.0
+005_coremark_x4_4MiB,coremark_x4,4MiB,4096,100000000000.0,2.0,0,0.0,0.0,2.0,7468866.0,0.0,0,0.0,7468867.0,0.0,0,0.0,7468894.0,0.0,0,0.0,7468871.0,0.0,0,0.0,1.0
