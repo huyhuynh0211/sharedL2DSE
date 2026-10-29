@@ -1,0 +1,63 @@
+cd ~/Documents/workspace/project_gem5/week3
+
+cd ~/gem5
+git diff --stat
+scons build/RISCV/gem5.opt -j8
+cd ~/Documents/workspace/project_gem5/week3
+
+mkdir -p bench_1
+riscv64-linux-gnu-g++ -O2 -static -o bench_1/gemm_int8 gemm_int8.cpp
+riscv64-linux-gnu-g++ -O2 -static -o bench_1/conv_int8 conv_int8.cpp
+
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_b1_gemm768 l2_run.py --mode static --ways 16 --banks 1 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_gemm768 l2_run.py --mode static --ways 16 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W16_gemm768 l2_run.py --mode fixed --ways 16 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/static_W8_gemm768 l2_run.py --mode static --ways 8 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_gemm768 l2_run.py --mode fixed --ways 8 --cmd "bench_1/gemm_int8 768"
+
+# Baseline: 16 ways always on
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_gemm256 l2_run.py --mode static --ways 16 --cmd "bench_1/gemm_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_conv64 l2_run.py --mode static --ways 16 --cmd "bench_1/conv_int8 64"
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_conv256 l2_run.py --mode static --ways 16 --cmd "bench_1/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_mixai l2_run.py --mode static --ways 16 --cmd "bench_1/gemm_int8 768" --cmd "bench_1/gemm_int8 768" --cmd "bench_1/conv_int8 256" --cmd "bench_1/conv_int8 256"
+
+# Dynamic way shutdown
+~/gem5/build/RISCV/gem5.opt -d out/dyn_gemm256 l2_run.py --mode dynamic --tmem 61 --cmd "bench_1/gemm_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_gemm768 l2_run.py --mode dynamic --tmem 61 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_conv64 l2_run.py --mode dynamic --tmem 61 --cmd "bench_1/conv_int8 64"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_conv256 l2_run.py --mode dynamic --tmem 61 --cmd "bench_1/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_mixai l2_run.py --mode dynamic --tmem 61 --cmd "bench_1/gemm_int8 768" --cmd "bench_1/gemm_int8 768" --cmd "bench_1/conv_int8 256" --cmd "bench_1/conv_int8 256"
+
+# Dynamic way shutdown, idle rule off (ways chosen by the ATD only)
+~/gem5/build/RISCV/gem5.opt -d out/dyn_gemm768_idle0 l2_run.py --mode dynamic --tmem 61 --idle 0 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_conv256_idle0 l2_run.py --mode dynamic --tmem 61 --idle 0 --cmd "bench_1/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_mixai_idle0 l2_run.py --mode dynamic --tmem 61 --idle 0 --cmd "bench_1/gemm_int8 768" --cmd "bench_1/gemm_int8 768" --cmd "bench_1/conv_int8 256" --cmd "bench_1/conv_int8 256"
+
+# Drowsy
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_off_gemm768 l2_run.py --mode drowsy --window 0 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_gemm256 l2_run.py --mode drowsy --window 4000 --cmd "bench_1/gemm_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_gemm768 l2_run.py --mode drowsy --window 4000 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_conv64 l2_run.py --mode drowsy --window 4000 --cmd "bench_1/conv_int8 64"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_conv256 l2_run.py --mode drowsy --window 4000 --cmd "bench_1/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_mixai l2_run.py --mode drowsy --window 4000 --cmd "bench_1/gemm_int8 768" --cmd "bench_1/gemm_int8 768" --cmd "bench_1/conv_int8 256" --cmd "bench_1/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w16000_gemm768 l2_run.py --mode drowsy --window 16000 --cmd "bench_1/gemm_int8 768"
+~/gem5/build/RISCV/gem5.opt -d out/drowsy_w4000_lat2_gemm768 l2_run.py --mode drowsy --window 4000 --wake-lat 2 --cmd "bench_1/gemm_int8 768"
+
+# Results -> results.log
+rm -f results.log
+python3 l2_summary.py out/static_W16_b1_gemm768 out/static_W16_gemm768 out/fixed_W16_gemm768 out/static_W8_gemm768 out/fixed_W8_gemm768
+python3 l2_summary.py out/static_W16_gemm256 out/dyn_gemm256 out/drowsy_w4000_gemm256
+python3 l2_summary.py out/static_W16_gemm768 out/dyn_gemm768 out/dyn_gemm768_idle0 out/drowsy_w4000_gemm768
+python3 l2_summary.py out/static_W16_conv64 out/dyn_conv64 out/drowsy_w4000_conv64
+python3 l2_summary.py out/static_W16_conv256 out/dyn_conv256 out/dyn_conv256_idle0 out/drowsy_w4000_conv256
+python3 l2_summary.py out/static_W16_mixai out/dyn_mixai out/dyn_mixai_idle0 out/drowsy_w4000_mixai
+python3 l2_summary.py out/static_W16_gemm768 out/drowsy_off_gemm768 out/drowsy_w4000_gemm768 out/drowsy_w16000_gemm768 out/drowsy_w4000_lat2_gemm768
+python3 atd_check.py out/dyn_gemm768_idle0
+python3 atd_check.py out/dyn_conv256_idle0
+python3 atd_check.py out/dyn_mixai_idle0
+python3 plot_dyn.py out/dyn_gemm256 out/dyn_gemm768 out/dyn_conv64 out/dyn_conv256 out/dyn_mixai out/dyn_gemm768_idle0 out/dyn_conv256_idle0 out/dyn_mixai_idle0
+
+# Energy with McPAT (week 3 template, 4-bank L2)
+python3 mcpat_flow/gem5tomcpat.py --runs out --mcpat ~/mcpat/mcpat --out result/energy.csv
+python3 mcpat_flow/mcpat_l2_leak.py out/static_W16_gemm768 --mcpat ~/mcpat/mcpat --out result/l2_leak.csv
+python3 energy_total.py result/energy.csv result/l2_leak.csv out gemm256 gemm768 conv64 conv256 mixai

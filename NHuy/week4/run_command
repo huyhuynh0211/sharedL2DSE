@@ -1,0 +1,60 @@
+cd ~/gem5
+scons build/RISCV/gem5.opt -j8
+cd ~/Documents/workspace/project_gem5/week4
+
+mkdir -p bench
+riscv64-linux-gnu-g++ -O2 -static -o bench/gemm_int8 gemm_int8.cpp
+riscv64-linux-gnu-g++ -O2 -static -o bench/conv_int8 conv_int8.cpp
+riscv64-linux-gnu-g++ -O2 -static -o bench/vec_stream vec_stream.cpp
+
+~/gem5/build/RISCV/gem5.opt -d out/cal_miss l2_run.py --mode static --cmd "bench/vec_stream 4096 2"
+~/gem5/build/RISCV/gem5.opt -d out/cal_hit l2_run.py --mode static --cmd "bench/vec_stream 64 50"
+python3 tmem_calc.py out/cal_miss out/cal_hit
+
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_vec192 l2_run.py --mode static --ways 16 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W12_vec192 l2_run.py --mode fixed --ways 12 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_vec192 l2_run.py --mode fixed --ways 8 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W4_vec192 l2_run.py --mode fixed --ways 4 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_vec192 l2_run.py --mode dynamic --tmem 10.4 --cmd "bench/vec_stream 192 400"
+
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_gemm64 l2_run.py --mode static --ways 16 --cmd "bench/gemm_int8 768 64"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W12_gemm64 l2_run.py --mode fixed --ways 12 --cmd "bench/gemm_int8 768 64"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_gemm64 l2_run.py --mode fixed --ways 8 --cmd "bench/gemm_int8 768 64"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W4_gemm64 l2_run.py --mode fixed --ways 4 --cmd "bench/gemm_int8 768 64"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_gemm64 l2_run.py --mode dynamic --tmem 10.4 --cmd "bench/gemm_int8 768 64"
+
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_conv256 l2_run.py --mode static --ways 16 --cmd "bench/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W12_conv256 l2_run.py --mode fixed --ways 12 --cmd "bench/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_conv256 l2_run.py --mode fixed --ways 8 --cmd "bench/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W4_conv256 l2_run.py --mode fixed --ways 4 --cmd "bench/conv_int8 256"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_conv256 l2_run.py --mode dynamic --tmem 10.4 --cmd "bench/conv_int8 256"
+
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_mix l2_run.py --mode static --ways 16 --cmd "bench/gemm_int8 768 64" --cmd "bench/gemm_int8 768 64" --cmd "bench/vec_stream 192 900" --cmd "bench/vec_stream 192 900"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W12_mix l2_run.py --mode fixed --ways 12 --cmd "bench/gemm_int8 768 64" --cmd "bench/gemm_int8 768 64" --cmd "bench/vec_stream 192 900" --cmd "bench/vec_stream 192 900"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_mix l2_run.py --mode fixed --ways 8 --cmd "bench/gemm_int8 768 64" --cmd "bench/gemm_int8 768 64" --cmd "bench/vec_stream 192 900" --cmd "bench/vec_stream 192 900"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W4_mix l2_run.py --mode fixed --ways 4 --cmd "bench/gemm_int8 768 64" --cmd "bench/gemm_int8 768 64" --cmd "bench/vec_stream 192 900" --cmd "bench/vec_stream 192 900"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_mix l2_run.py --mode dynamic --tmem 10.4 --cmd "bench/gemm_int8 768 64" --cmd "bench/gemm_int8 768 64" --cmd "bench/vec_stream 192 900" --cmd "bench/vec_stream 192 900"
+
+~/gem5/build/RISCV/gem5.opt -d out/cal_miss_1g l2_run.py --mode static --clock-mhz 1000 --cmd "bench/vec_stream 4096 2"
+~/gem5/build/RISCV/gem5.opt -d out/cal_hit_1g l2_run.py --mode static --clock-mhz 1000 --cmd "bench/vec_stream 64 50"
+python3 tmem_calc.py out/cal_miss_1g out/cal_hit_1g
+~/gem5/build/RISCV/gem5.opt -d out/static_W16_vec192_1g l2_run.py --mode static --ways 16 --clock-mhz 1000 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/fixed_W8_vec192_1g l2_run.py --mode fixed --ways 8 --clock-mhz 1000 --cmd "bench/vec_stream 192 400"
+~/gem5/build/RISCV/gem5.opt -d out/dyn_vec192_1g l2_run.py --mode dynamic --clock-mhz 1000 --tmem 84 --cmd "bench/vec_stream 192 400"
+
+rm -f results.log
+python3 tmem_calc.py out/cal_miss out/cal_hit
+python3 tmem_calc.py out/cal_miss_1g out/cal_hit_1g
+python3 l2_summary.py out/static_W16_vec192 out/fixed_W12_vec192 out/fixed_W8_vec192 out/fixed_W4_vec192 out/dyn_vec192
+python3 l2_summary.py out/static_W16_gemm64 out/fixed_W12_gemm64 out/fixed_W8_gemm64 out/fixed_W4_gemm64 out/dyn_gemm64
+python3 l2_summary.py out/static_W16_conv256 out/fixed_W12_conv256 out/fixed_W8_conv256 out/fixed_W4_conv256 out/dyn_conv256
+python3 l2_summary.py out/static_W16_mix out/fixed_W12_mix out/fixed_W8_mix out/fixed_W4_mix out/dyn_mix
+python3 l2_summary.py out/static_W16_vec192_1g out/fixed_W8_vec192_1g out/dyn_vec192_1g
+python3 atd_check.py out/dyn_vec192
+python3 atd_check.py out/dyn_gemm64
+python3 atd_check.py out/dyn_conv256
+python3 atd_check.py out/dyn_mix
+
+python3 mcpat_flow/gem5tomcpat.py --runs out --mcpat ~/mcpat/mcpat --out result/energy.csv
+python3 mcpat_flow/mcpat_l2_leak.py out/static_W16_vec192 --mcpat ~/mcpat/mcpat --out result/l2_leak.csv
+python3 energy_total.py result/energy.csv result/l2_leak.csv out vec192 gemm64 conv256 mix

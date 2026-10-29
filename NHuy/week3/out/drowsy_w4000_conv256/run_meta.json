@@ -1,0 +1,35 @@
+{
+  "mode": "drowsy",
+  "ways": 16,
+  "banks": 4,
+  "repl": "treeplru",
+  "warmup": 10000000,
+  "cmd": [
+    "bench_1/conv_int8 256"
+  ],
+  "interval": 1000000,
+  "smax": 0.01,
+  "tmem": 49.0,
+  "margin": 1,
+  "wmin": 1,
+  "k": 3,
+  "idle": 1000,
+  "window": 4000,
+  "wake_lat": 1,
+  "ticks_measured": 89709597000,
+  "cause": "exiting with last active thread context",
+  "bank_sets": 256,
+  "bank_ways": 16,
+  "intlv_high_bit": 15,
+  "cmds": [
+    "bench_1/conv_int8 256",
+    "bench_1/conv_int8 256",
+    "bench_1/conv_int8 256",
+    "bench_1/conv_int8 256"
+  ],
+  "num_blocks": 16384,
+  "drowsy_hit_wakes": 72063,
+  "drowsy_fill_wakes": 426,
+  "drowsy_awake_ticks": 145124439000,
+  "awake_fraction": 9.873740498531716e-05
+}

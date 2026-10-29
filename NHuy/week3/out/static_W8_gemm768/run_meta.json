@@ -1,0 +1,30 @@
+{
+  "mode": "static",
+  "ways": 8,
+  "banks": 4,
+  "repl": "treeplru",
+  "warmup": 10000000,
+  "cmd": [
+    "bench_1/gemm_int8 768"
+  ],
+  "interval": 1000000,
+  "smax": 0.01,
+  "tmem": 49.0,
+  "margin": 1,
+  "wmin": 1,
+  "k": 3,
+  "idle": 1000,
+  "window": 4000,
+  "wake_lat": 1,
+  "ticks_measured": 64942470000,
+  "cause": "exiting with last active thread context",
+  "bank_sets": 256,
+  "bank_ways": 8,
+  "intlv_high_bit": 15,
+  "cmds": [
+    "bench_1/gemm_int8 768",
+    "bench_1/gemm_int8 768",
+    "bench_1/gemm_int8 768",
+    "bench_1/gemm_int8 768"
+  ]
+}

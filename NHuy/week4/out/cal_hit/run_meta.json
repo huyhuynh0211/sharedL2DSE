@@ -1,0 +1,51 @@
+{
+  "mode": "static",
+  "ways": 16,
+  "banks": 4,
+  "repl": "treeplru",
+  "clock_mhz": 100,
+  "mem_ns": 25.0,
+  "l1_mshrs": 8,
+  "warmup": 0,
+  "cmd": [
+    "bench/vec_stream 64 50"
+  ],
+  "interval": 1000000,
+  "smax": 0.01,
+  "tmem": null,
+  "margin": 1,
+  "wmin": 1,
+  "k": 3,
+  "idle": 0,
+  "window": 4000,
+  "wake_lat": 1,
+  "ticks_measured": 25208330000,
+  "cycles_measured": 2520833,
+  "cause": "exiting with last active thread context",
+  "bank_sets": 256,
+  "bank_ways": 16,
+  "intlv_high_bit": 15,
+  "cmds": [
+    "bench/vec_stream 64 50",
+    "bench/vec_stream 64 50",
+    "bench/vec_stream 64 50",
+    "bench/vec_stream 64 50"
+  ],
+  "l2_lat": {
+    "tag_latency": 1,
+    "data_latency": 1,
+    "response_latency": 1
+  },
+  "noc": {
+    "width": 8,
+    "frontend_latency": 0,
+    "forward_latency": 0,
+    "response_latency": 0
+  },
+  "membus": {
+    "width": 16,
+    "frontend_latency": 1,
+    "forward_latency": 1,
+    "response_latency": 1
+  }
+}
