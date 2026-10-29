@@ -1,0 +1,217 @@
+
+== l2_summary.py out/static_W16_gemm256 out/dyn_gemm256 out/drowsy_w4000_gemm256
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_gemm256, 12764, 428, 3.35, 0.010, 12.3, 15162293, [3377, 2690, 3300, 3397]
+out/dyn_gemm256, 12764, 10456, 81.92, 0.240, 62.7, 15310253, [3377, 2690, 3300, 3397]
+out/drowsy_w4000_gemm256, 12764, 428, 3.35, 0.010, 13.3, 15162604, [3377, 2690, 3300, 3397]
+
+== l2_summary.py out/static_W16_gemm768 out/dyn_gemm768 out/dyn_gemm768_idle0 out/drowsy_w4000_gemm768
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_gemm768, 52274, 774, 1.48, 0.004, 12.4, 64411880, [13772, 11816, 13774, 12912]
+out/dyn_gemm768, 52274, 49755, 95.18, 0.269, 68.1, 65093836, [13772, 11816, 13774, 12912]
+out/dyn_gemm768_idle0, 52248, 35749, 68.42, 0.193, 50.2, 64871746, [13790, 11800, 13759, 12899]
+out/drowsy_w4000_gemm768, 52288, 892, 1.71, 0.005, 13.5, 64415866, [13780, 11816, 13774, 12918]
+
+== l2_summary.py out/static_W16_conv64 out/dyn_conv64 out/drowsy_w4000_conv64
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_conv64, 6808, 367, 5.39, 0.009, 12.6, 15312787, [1976, 1667, 1395, 1770]
+out/dyn_conv64, 6808, 2897, 42.55, 0.068, 33.5, 15344700, [1976, 1667, 1395, 1770]
+out/drowsy_w4000_conv64, 6808, 367, 5.39, 0.009, 13.5, 15312645, [1976, 1667, 1395, 1770]
+
+== l2_summary.py out/static_W16_conv256 out/dyn_conv256 out/dyn_conv256_idle0 out/drowsy_w4000_conv256
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_conv256, 36353, 428, 1.18, 0.002, 12.1, 89709409, [8766, 8843, 9158, 9586]
+out/dyn_conv256, 36375, 35317, 97.09, 0.142, 65.3, 90137921, [8770, 8843, 9158, 9604]
+out/dyn_conv256_idle0, 36375, 35317, 97.09, 0.142, 65.3, 90137921, [8770, 8843, 9158, 9604]
+out/drowsy_w4000_conv256, 36355, 427, 1.17, 0.002, 13.1, 89709597, [8766, 8843, 9160, 9586]
+
+== l2_summary.py out/static_W16_mixai out/dyn_mixai out/dyn_mixai_idle0 out/drowsy_w4000_mixai
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_mixai, 44324, 640, 1.44, 0.003, 12.3, 89713231, [10942, 10626, 11489, 11267]
+out/dyn_mixai, 44324, 42441, 95.75, 0.195, 66.8, 90139594, [10942, 10626, 11489, 11267]
+out/dyn_mixai_idle0, 44324, 42158, 95.11, 0.194, 66.8, 90139559, [10942, 10626, 11489, 11267]
+out/drowsy_w4000_mixai, 44327, 665, 1.50, 0.003, 13.3, 89714644, [10942, 10628, 11490, 11267]
+
+== l2_summary.py out/static_W16_gemm768 out/drowsy_off_gemm768 out/drowsy_w4000_gemm768 out/drowsy_w16000_gemm768 out/drowsy_w4000_lat2_gemm768
+out, L2 acc, L2 miss, miss %, MPKI, L1D miss lat (cyc), cycles, acc per bank
+out/static_W16_gemm768, 52274, 774, 1.48, 0.004, 12.4, 64411880, [13772, 11816, 13774, 12912]
+out/drowsy_off_gemm768, 52274, 774, 1.48, 0.004, 12.4, 64411880, [13772, 11816, 13774, 12912]
+out/drowsy_w4000_gemm768, 52288, 892, 1.71, 0.005, 13.5, 64415866, [13780, 11816, 13774, 12918]
+out/drowsy_w16000_gemm768, 52288, 892, 1.71, 0.005, 13.5, 64415866, [13780, 11816, 13774, 12918]
+out/drowsy_w4000_lat2_gemm768, 52254, 882, 1.69, 0.005, 14.5, 64416424, [13796, 11800, 13759, 12899]
+
+== energy_dyn.py out/dyn_gemm256 1000000 out/static_W16_gemm256
+intervals        : 15, average W: 3.00
+run time         : dynamic 15.310 ms, W16 15.162 ms (+0.98 %)
+L2 leakage (dyn) : 0.639 mJ
+L2 leakage (W16) : 2.177 mJ
+saving           : 70.7 %
+
+== energy_dyn.py out/dyn_gemm768 1000000 out/static_W16_gemm768
+intervals        : 65, average W: 1.65
+run time         : dynamic 65.094 ms, W16 64.412 ms (+1.06 %)
+L2 leakage (dyn) : 2.054 mJ
+L2 leakage (W16) : 9.250 mJ
+saving           : 77.8 %
+
+== energy_dyn.py out/dyn_conv64 1000000 out/static_W16_conv64
+intervals        : 15, average W: 3.00
+run time         : dynamic 15.345 ms, W16 15.313 ms (+0.21 %)
+L2 leakage (dyn) : 0.640 mJ
+L2 leakage (W16) : 2.199 mJ
+saving           : 70.9 %
+
+== energy_dyn.py out/dyn_conv256 1000000 out/static_W16_conv256
+intervals        : 90, average W: 1.33
+run time         : dynamic 90.138 ms, W16 89.709 ms (+0.48 %)
+L2 leakage (dyn) : 2.614 mJ
+L2 leakage (W16) : 12.882 mJ
+saving           : 79.7 %
+
+== energy_dyn.py out/dyn_mixai 1000000 out/static_W16_mixai
+intervals        : 90, average W: 1.33
+run time         : dynamic 90.140 ms, W16 89.713 ms (+0.48 %)
+L2 leakage (dyn) : 2.614 mJ
+L2 leakage (W16) : 12.883 mJ
+saving           : 79.7 %
+
+== energy_dyn.py out/dyn_gemm768_idle0 1000000 out/static_W16_gemm768
+intervals        : 64, average W: 5.34
+run time         : dynamic 64.872 ms, W16 64.412 ms (+0.71 %)
+L2 leakage (dyn) : 3.795 mJ
+L2 leakage (W16) : 9.250 mJ
+saving           : 59.0 %
+
+== energy_dyn.py out/dyn_conv256_idle0 1000000 out/static_W16_conv256
+intervals        : 90, average W: 1.33
+run time         : dynamic 90.138 ms, W16 89.709 ms (+0.48 %)
+L2 leakage (dyn) : 2.614 mJ
+L2 leakage (W16) : 12.882 mJ
+saving           : 79.7 %
+
+== energy_dyn.py out/dyn_mixai_idle0 1000000 out/static_W16_mixai
+intervals        : 90, average W: 1.63
+run time         : dynamic 90.140 ms, W16 89.713 ms (+0.48 %)
+L2 leakage (dyn) : 2.815 mJ
+L2 leakage (W16) : 12.883 mJ
+saving           : 78.2 %
+
+== energy_drowsy.py out/drowsy_w4000_gemm256 out/static_W16_gemm256
+window 4000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.02 %
+hits on drowsy line : 25038
+run time vs W16     : +0.002 %
+L2 leakage (drowsy) : 0.532 mJ
+L2 leakage (W16)    : 2.177 mJ
+saving              : 75.6 %
+
+== energy_drowsy.py out/drowsy_w4000_gemm768 out/static_W16_gemm768
+window 4000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.02 %
+hits on drowsy line : 103302
+run time vs W16     : +0.006 %
+L2 leakage (drowsy) : 2.258 mJ
+L2 leakage (W16)    : 9.250 mJ
+saving              : 75.6 %
+
+== energy_drowsy.py out/drowsy_w4000_conv64 out/static_W16_conv64
+window 4000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.01 %
+hits on drowsy line : 13220
+run time vs W16     : -0.001 %
+L2 leakage (drowsy) : 0.537 mJ
+L2 leakage (W16)    : 2.199 mJ
+saving              : 75.6 %
+
+== energy_drowsy.py out/drowsy_w4000_conv256 out/static_W16_conv256
+window 4000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.01 %
+hits on drowsy line : 72063
+run time vs W16     : +0.000 %
+L2 leakage (drowsy) : 3.144 mJ
+L2 leakage (W16)    : 12.882 mJ
+saving              : 75.6 %
+
+== energy_drowsy.py out/drowsy_w4000_mixai out/static_W16_mixai
+window 4000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.01 %
+hits on drowsy line : 87677
+run time vs W16     : +0.002 %
+L2 leakage (drowsy) : 3.145 mJ
+L2 leakage (W16)    : 12.883 mJ
+saving              : 75.6 %
+
+== energy_drowsy.py out/drowsy_w16000_gemm768 out/static_W16_gemm768
+window 16000, wake_lat 1, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.08 %
+hits on drowsy line : 103301
+run time vs W16     : +0.006 %
+L2 leakage (drowsy) : 2.263 mJ
+L2 leakage (W16)    : 9.250 mJ
+saving              : 75.5 %
+
+== energy_drowsy.py out/drowsy_w4000_lat2_gemm768 out/static_W16_gemm768
+window 4000, wake_lat 2, r 0.16, f_tag 0.1
+awake fraction (a)  : 0.02 %
+hits on drowsy line : 103245
+run time vs W16     : +0.007 %
+L2 leakage (drowsy) : 2.258 mJ
+L2 leakage (W16)    : 9.250 mJ
+saving              : 75.6 %
+
+== atd_check.py out/dyn_gemm768_idle0
+W, predicted miss (%)
+16, 0.00
+15, 0.13
+14, 1.93
+13, 17.68
+12, 31.58
+11, 40.06
+10, 43.09
+9, 44.89
+8, 46.24
+7, 46.75
+6, 47.01
+5, 51.96
+4, 73.25
+3, 98.59
+2, 99.87
+1, 100.00
+
+== atd_check.py out/dyn_conv256_idle0
+W, predicted miss (%)
+16, 0.00
+15, 0.00
+14, 0.00
+13, 0.00
+12, 0.00
+11, 0.00
+10, 3.99
+9, 39.17
+8, 100.00
+7, 100.00
+6, 100.00
+5, 100.00
+4, 100.00
+3, 100.00
+2, 100.00
+1, 100.00
+
+== atd_check.py out/dyn_mixai_idle0
+W, predicted miss (%)
+16, 0.44
+15, 0.44
+14, 0.44
+13, 0.74
+12, 2.50
+11, 23.20
+10, 47.35
+9, 63.11
+8, 66.57
+7, 68.19
+6, 68.85
+5, 69.22
+4, 75.77
+3, 88.73
+2, 96.54
+1, 99.93
