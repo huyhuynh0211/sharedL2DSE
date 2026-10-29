@@ -5,21 +5,13 @@ import subprocess
 from pathlib import Path
 
 MIXES = {
-    "loop":        ["loop768k", "empty", "empty", "empty"],
-    "temporal":    ["temporal", "empty", "empty", "empty"],
-    "graph":       ["graph", "empty", "empty", "empty"],
-    "stream":      ["stream", "empty", "empty", "empty"],
-    "loop_x4":     ["loop768k", "loop768k", "loop768k", "loop768k"],
-    "temporal_x4": ["temporal", "temporal", "temporal", "temporal"],
-    "graph_x4":    ["graph", "graph", "graph", "graph"],
-    "stream_x4":   ["stream", "stream", "stream", "stream"],
-    "mix":         ["temporal", "stream", "loop768k", "graph"],
+    "coremark":    ["coremark", "empty", "empty", "empty"],
+    "coremark_x4": ["coremark", "coremark", "coremark", "coremark"],
 }
 
 SWEEP = {
-    #"mix":     list(MIXES.keys()),
-    "mix":     ["temporal", "temporal_x4", "mix"],
-    "l2_size": ["256KiB", "512KiB", "1MiB", "2MiB", "4MiB"],
+    "mix":     list(MIXES.keys()),
+    "l2_size": ["256KiB", "1MiB", "4MiB"],
 }
 
 parser = argparse.ArgumentParser(description="Run a gem5 sweep")

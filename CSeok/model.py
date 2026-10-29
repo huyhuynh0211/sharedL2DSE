@@ -11,6 +11,10 @@ REPL = {
 }
 
 NUM_CPUS = 4
+CLOCK = "100MHz"
+NS_PER_CYCLE = 10            # 100 MHz -> 10 ns per cycle
+WARMUP_CYCLES = 2_000_000
+MEASURE_CYCLES = 10_000_000
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--l2_size", default="1MiB")
@@ -24,35 +28,54 @@ args = parser.parse_args()
 
 binaries = [str(Path(args.bin_dir) / (name + ".riscv")) for name in args.workload]
 
+# L1 caches (CVA6 baseline; MSHRs corrected to 4)
 class L1Cache(Cache):
+    tag_latency = 1
+    data_latency = 1
+    response_latency = 1
+    mshrs = 4
+    tgts_per_mshr = 8
+    write_buffers = 8
+    writeback_clean = False
+
+# Shared L2 (CVA6 baseline, latencies for 100 MHz)
+class L2Cache(Cache):
     tag_latency = 2
     data_latency = 2
-    response_latency = 2
-    mshrs = 4
-    tgts_per_mshr = 20
-
-class L2Cache(Cache):
-    tag_latency = 10
-    data_latency = 10
-    response_latency = 10
+    response_latency = 1
+    sequential_access = False
+    clusivity = "mostly_incl"
+    writeback_clean = False
     mshrs = 32
     tgts_per_mshr = 12
+    write_buffers = 16
 
 #System
 system = System()
-system.clk_domain = SrcClockDomain(clock="1GHz", voltage_domain=VoltageDomain())
+system.clk_domain = SrcClockDomain(clock=CLOCK, voltage_domain=VoltageDomain())
 system.mem_mode = "timing"
 system.mem_ranges = [AddrRange("512MiB")]
 system.cache_line_size = 64
 
-#CPUs
+#CPUs, tuned toward CVA6
 system.cpu = [RiscvMinorCPU(cpu_id=i) for i in range(NUM_CPUS)]
-
-#Private L1s, all connected to the shared L2 bus
-system.l2bus = L2XBar()
 for cpu in system.cpu:
-    cpu.icache = L1Cache(size="16KiB", assoc=4)
-    cpu.dcache = L1Cache(size="32KiB", assoc=8)
+    cpu.decodeInputWidth = 1
+    cpu.executeInputWidth = 1
+    cpu.executeIssueLimit = 1
+    cpu.executeCommitLimit = 2
+    cpu.decodeToExecuteForwardDelay = 2
+
+#Crossbar between the L1s and the L2
+system.l2bus = L2XBar(width=16, frontend_latency=1,
+                      forward_latency=1, response_latency=1)
+
+#Private L1s
+for cpu in system.cpu:
+    cpu.icache = L1Cache(size="16KiB", assoc=4, is_read_only=True,
+                         replacement_policy=RandomRP())
+    cpu.dcache = L1Cache(size="32KiB", assoc=8,
+                         replacement_policy=RandomRP())
     cpu.icache.cpu_side = cpu.icache_port
     cpu.dcache.cpu_side = cpu.dcache_port
     cpu.icache.mem_side = system.l2bus.cpu_side_ports
@@ -82,10 +105,20 @@ for i, cpu in enumerate(system.cpu):
     cpu.workload = process
     cpu.createThreads()
 
-#Start sim
+#Start sim: warm up, reset stats, then measure a fixed window
 root = Root(full_system=False, system=system)
 m5.instantiate()
 
-print("Beginning simulation")
-exit_event = m5.simulate()
+def ticks(cycles):
+    return cycles * NS_PER_CYCLE * 1000     # 1 tick = 1 ps
+
+print("Warming up")
+exit_event = m5.simulate(ticks(WARMUP_CYCLES))
+if exit_event.getCause() != "simulate() limit reached":
+    raise SystemExit(f"stopped during warm-up: {exit_event.getCause()}")
+m5.stats.reset()
+
+print("Measuring")
+exit_event = m5.simulate(ticks(MEASURE_CYCLES))
+m5.stats.dump()
 print(f"Exiting @ tick {m5.curTick()} because {exit_event.getCause()}")
